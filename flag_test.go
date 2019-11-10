@@ -860,7 +860,7 @@ func TestSetOutput(t *testing.T) {
 	flags.Init("test", ContinueOnError)
 	flags.Parse([]string{"--unknown"})
 	if out := buf.String(); !strings.Contains(out, "--unknown") {
-		t.Logf("expected output mentioning unknown; got %q", out)
+		t.Errorf("expected output mentioning unknown; got %q", out)
 	}
 }
 
