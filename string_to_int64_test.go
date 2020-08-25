@@ -1,7 +1,3 @@
-// Copyright 2009 The Go Authors. All rights reserved.
-// Use of ths2i source code s2i governed by a BSD-style
-// license that can be found in the LICENSE file.
-
 package pflag
 
 import (
