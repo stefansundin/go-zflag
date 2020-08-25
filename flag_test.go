@@ -854,14 +854,20 @@ func TestUserDefined(t *testing.T) {
 }
 
 func TestSetOutput(t *testing.T) {
-	var flags FlagSet
 	var buf bytes.Buffer
+	var flags FlagSet
+	// PanicOnError is used because:
+	// - ExitOnError kills the test early
+	// - ContinueOnError doesn't print at all
+	flags.Init("test", PanicOnError)
 	flags.SetOutput(&buf)
-	flags.Init("test", ContinueOnError)
-	flags.Parse([]string{"--unknown"})
-	if out := buf.String(); !strings.Contains(out, "--unknown") {
-		t.Logf("expected output mentioning unknown; got %q", out)
-	}
+	defer func() {
+		recover()
+		if out := buf.String(); !strings.Contains(out, "--testSetOutput") {
+			t.Errorf("expected output mentioning testSetOutput; got %q", out)
+		}
+	}()
+	flags.Parse([]string{"--testSetOutput"})
 }
 
 func TestOutput(t *testing.T) {
