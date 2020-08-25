@@ -148,6 +148,9 @@ type FlagSet struct {
 	// ParseErrorsWhitelist is used to configure a whitelist of errors
 	ParseErrorsWhitelist ParseErrorsWhitelist
 
+	// DisableBuiltinHelp toggles the built-in convention of handling -h and --help
+	DisableBuiltinHelp bool
+
 	name              string
 	parsed            bool
 	actual            map[NormalizedName]*Flag
@@ -1002,8 +1005,11 @@ func (f *FlagSet) parseLongArg(s string, args []string, fn parseFunc) (a []strin
 	if !exists || flag.ShorthandOnly {
 		switch {
 		case name == "help":
-			f.usage()
-			return a, ErrHelp
+			if !f.DisableBuiltinHelp {
+				f.usage()
+				err = ErrHelp
+			}
+			return
 		case f.ParseErrorsWhitelist.UnknownFlags:
 			// --unknown=unknownval arg ...
 			// we do not want to lose arg in this case
@@ -1056,8 +1062,10 @@ func (f *FlagSet) parseSingleShortArg(shorthands string, args []string, fn parse
 	if !exists {
 		switch {
 		case c == 'h':
-			f.usage()
-			err = ErrHelp
+			if !f.DisableBuiltinHelp {
+				f.usage()
+				err = ErrHelp
+			}
 			return
 		case f.ParseErrorsWhitelist.UnknownFlags:
 			// '-f=arg arg ...'
