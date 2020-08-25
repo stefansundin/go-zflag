@@ -1043,7 +1043,7 @@ func (f *FlagSet) parseLongArg(s string, args []string, fn parseFunc) (a []strin
 
 	err = fn(flag, value)
 	if err != nil {
-		f.failf(err.Error())
+		err = f.failf(err.Error())
 	}
 	return
 }
@@ -1111,7 +1111,7 @@ func (f *FlagSet) parseSingleShortArg(shorthands string, args []string, fn parse
 
 	err = fn(flag, value)
 	if err != nil {
-		f.failf(err.Error())
+		err = f.failf(err.Error())
 	}
 	return
 }
@@ -1169,7 +1169,9 @@ func (f *FlagSet) parseArgs(args []string, fn parseFunc) (err error) {
 func (f *FlagSet) Parse(arguments []string) error {
 	if f.addedGoFlagSets != nil {
 		for _, goFlagSet := range f.addedGoFlagSets {
-			goFlagSet.Parse(nil)
+			if err := goFlagSet.Parse(nil); err != nil {
+				return err
+			}
 		}
 	}
 	f.parsed = true
