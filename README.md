@@ -1,6 +1,24 @@
-[![Build Status](https://travis-ci.org/spf13/pflag.svg?branch=master)](https://travis-ci.org/spf13/pflag)
-[![Go Report Card](https://goreportcard.com/badge/github.com/spf13/pflag)](https://goreportcard.com/report/github.com/spf13/pflag)
-[![GoDoc](https://godoc.org/github.com/spf13/pflag?status.svg)](https://godoc.org/github.com/spf13/pflag)
+# pflag
+
+[![Build Status](https://travis-ci.org/cornfeedhobo/pflag.svg?branch=master)](https://travis-ci.org/cornfeedhobo/pflag)
+[![Go Report Card](https://goreportcard.com/badge/github.com/cornfeedhobo/pflag)](https://goreportcard.com/report/github.com/cornfeedhobo/pflag)
+[![GoDoc](https://godoc.org/github.com/cornfeedhobo/pflag?status.svg)](https://godoc.org/github.com/cornfeedhobo/pflag)
+
+***This is a fork of [spf13/pflag](https://github.com/spf13/pflag) due to poor maintenence***
+
+* [Description](#description)
+* [Installation](#installation)
+* [Usage](#usage)
+  * [Using this fork with <a href="https://github\.com/spf13/cobra">cobra</a>](#using-this-fork-with-cobra)
+  * [General usage](#general-usage)
+  * [Setting no option default values for flags](#setting-no-option-default-values-for-flags)
+  * [Command line flag syntax](#command-line-flag-syntax)
+  * [Mutating or "Normalizing" Flag names](#mutating-or-normalizing-flag-names)
+  * [Deprecating a flag or its shorthand](#deprecating-a-flag-or-its-shorthand)
+  * [Hidden flags](#hidden-flags)
+  * [Disable sorting of flags](#disable-sorting-of-flags)
+  * [Supporting Go flags when using pflag](#supporting-go-flags-when-using-pflag)
+* [More info](#more-info)
 
 ## Description
 
@@ -22,11 +40,15 @@ pflag is available using the standard `go get` command.
 
 Install by running:
 
-    go get github.com/spf13/pflag
+```bash
+go get github.com/cornfeedhobo/pflag
+```
 
 Run tests by running:
 
-    go test github.com/spf13/pflag
+```bash
+go test github.com/cornfeedhobo/pflag
+```
 
 ## Usage
 
@@ -35,7 +57,7 @@ pflag under the name "flag" then all code should continue to function
 with no changes.
 
 ``` go
-import flag "github.com/spf13/pflag"
+import flag "github.com/cornfeedhobo/pflag"
 ```
 
 There is one exception to this: if you directly instantiate the Flag struct
@@ -43,6 +65,23 @@ there is one more field "Shorthand" that you will need to set.
 Most code never instantiates this struct directly, and instead uses
 functions such as String(), BoolVar(), and Var(), and is therefore
 unaffected.
+
+### Using this fork with [cobra](https://github.com/spf13/cobra)
+
+Initialize your new app as normal
+
+``` bash
+cobra init --pkg-name example.com/hello
+go mod init example.com/hello
+```
+
+Override the upstream
+
+``` bash
+go mod edit -replace github.com/spf13/pflag=github.com/cornfeedhobo/pflag
+```
+
+### General usage
 
 Define flags using flag.String(), Bool(), Int(), etc.
 
@@ -123,7 +162,7 @@ in a command-line interface. The methods of FlagSet are
 analogous to the top-level functions for the command-line
 flag set.
 
-## Setting no option default values for flags
+### Setting no option default values for flags
 
 After you create a flag it is possible to set the pflag.NoOptDefVal for
 the given flag. Doing this changes the meaning of the flag slightly. If
@@ -143,9 +182,9 @@ Would result in something like
 | --flagname       | ip=4321         |
 | [nothing]        | ip=1234         |
 
-## Command line flag syntax
+### Command line flag syntax
 
-```
+``` plain
 --flag    // boolean flags, or flags with no option default values
 --flag x  // only on flags without a default value
 --flag=x
@@ -156,7 +195,7 @@ different than a double dash. Single dashes signify a series of shorthand
 letters for flags. All but the last shorthand letter must be boolean flags
 or a flag with a default value
 
-```
+``` plain
 // boolean or flags where the 'no option default value' is set
 -f
 -f=true
@@ -184,7 +223,7 @@ Boolean flags (in their long form) accept 1, 0, t, f, true, false,
 TRUE, FALSE, True, False.
 Duration flags accept any input valid for time.ParseDuration.
 
-## Mutating or "Normalizing" Flag names
+### Mutating or "Normalizing" Flag names
 
 It is possible to set a custom flag name 'normalization function.' It allows flag names to be mutated both when created in the code and when used on the command line to some 'normalized' form. The 'normalized' form is used for comparison. Two examples of using the custom normalization func follow.
 
@@ -218,62 +257,74 @@ func aliasNormalizeFunc(f *pflag.FlagSet, name string) pflag.NormalizedName {
 myFlagSet.SetNormalizeFunc(aliasNormalizeFunc)
 ```
 
-## Deprecating a flag or its shorthand
+### Deprecating a flag or its shorthand
+
 It is possible to deprecate a flag, or just its shorthand. Deprecating a flag/shorthand hides it from help text and prints a usage message when the deprecated flag/shorthand is used.
 
 **Example #1**: You want to deprecate a flag named "badflag" as well as inform the users what flag they should use instead.
-```go
+
+``` go
 // deprecate a flag by specifying its name and a usage message
 flags.MarkDeprecated("badflag", "please use --good-flag instead")
 ```
+
 This hides "badflag" from help text, and prints `Flag --badflag has been deprecated, please use --good-flag instead` when "badflag" is used.
 
 **Example #2**: You want to keep a flag name "noshorthandflag" but deprecate its shortname "n".
-```go
+
+``` go
 // deprecate a flag shorthand by specifying its flag name and a usage message
 flags.MarkShorthandDeprecated("noshorthandflag", "please use --noshorthandflag only")
 ```
+
 This hides the shortname "n" from help text, and prints `Flag shorthand -n has been deprecated, please use --noshorthandflag only` when the shorthand "n" is used.
 
 Note that usage message is essential here, and it should not be empty.
 
-## Hidden flags
+### Hidden flags
+
 It is possible to mark a flag as hidden, meaning it will still function as normal, however will not show up in usage/help text.
 
 **Example**: You have a flag named "secretFlag" that you need for internal use only and don't want it showing up in help text, or for its usage text to be available.
-```go
+
+``` go
 // hide a flag by specifying its name
 flags.MarkHidden("secretFlag")
 ```
 
-## Disable sorting of flags
+### Disable sorting of flags
+
 `pflag` allows you to disable sorting of flags for help and usage message.
 
 **Example**:
-```go
+
+``` go
 flags.BoolP("verbose", "v", false, "verbose output")
 flags.String("coolflag", "yeaah", "it's really cool flag")
 flags.Int("usefulflag", 777, "sometimes it's very useful")
 flags.SortFlags = false
 flags.PrintDefaults()
 ```
+
 **Output**:
-```
+
+``` plain
   -v, --verbose           verbose output
       --coolflag string   it's really cool flag (default "yeaah")
       --usefulflag int    sometimes it's very useful (default 777)
 ```
 
+### Supporting Go flags when using pflag
 
-## Supporting Go flags when using pflag
 In order to support flags defined using Go's `flag` package, they must be added to the `pflag` flagset. This is usually necessary
 to support flags defined by third-party dependencies (e.g. `golang/glog`).
 
 **Example**: You want to add the Go flags to the `CommandLine` flagset
-```go
+
+``` go
 import (
 	goflag "flag"
-	flag "github.com/spf13/pflag"
+	flag "github.com/cornfeedhobo/pflag"
 )
 
 var ip *int = flag.Int("flagname", 1234, "help message for flagname")
@@ -289,8 +340,8 @@ func main() {
 You can see the full reference documentation of the pflag package
 [at godoc.org][3], or through go's standard documentation system by
 running `godoc -http=:6060` and browsing to
-[http://localhost:6060/pkg/github.com/spf13/pflag][2] after
+[http://localhost:6060/pkg/github.com/cornfeedhobo/pflag][2] after
 installation.
 
-[2]: http://localhost:6060/pkg/github.com/spf13/pflag
-[3]: http://godoc.org/github.com/spf13/pflag
+[2]: http://localhost:6060/pkg/github.com/cornfeedhobo/pflag
+[3]: http://godoc.org/github.com/cornfeedhobo/pflag
