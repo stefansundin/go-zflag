@@ -951,8 +951,8 @@ func VarS(value Value, name, shorthand, usage string) {
 // returns the error.
 func (f *FlagSet) failf(format string, a ...interface{}) error {
 	err := fmt.Errorf(format, a...)
+	fmt.Fprintln(f.Output(), err)
 	if f.errorHandling != ContinueOnError {
-		fmt.Fprintln(f.Output(), err)
 		f.usage()
 	}
 	return err
