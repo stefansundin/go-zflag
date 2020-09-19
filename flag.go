@@ -440,8 +440,9 @@ func Set(name, value string) error {
 	return CommandLine.Set(name, value)
 }
 
-// PrintDefaults prints, to standard error unless configured
-// otherwise, the default values of all defined flags in the set.
+// PrintDefaults prints to standard error unless configured otherwise, the
+// default values of all defined command-line flags in the set. See the
+// documentation for the global function PrintDefaults for more information.
 func (f *FlagSet) PrintDefaults() {
 	usages := f.FlagUsages()
 	fmt.Fprint(f.Output(), usages)
@@ -512,13 +513,13 @@ func UnquoteUsage(flag *Flag) (name string, usage string) {
 		name = "float"
 	case "floatSlice", "float32Slice", "float64Slice":
 		name = "floats"
-	case "int32", "int64":
+	case "int8", "int16", "int32", "int64":
 		name = "int"
 	case "intSlice", "int8Slice", "int16Slice", "int32Slice", "int64Slice":
 		name = "ints"
 	case "stringSlice":
 		name = "strings"
-	case "uint32", "uint64":
+	case "uint8", "uint16", "uint32", "uint64":
 		name = "uint"
 	case "uintSlice", "uint8Slice", "uint16Slice", "uint32Slice", "uint64Slice":
 		name = "uints"
@@ -679,7 +680,27 @@ func (f *FlagSet) FlagUsages() string {
 	return f.FlagUsagesWrapped(0)
 }
 
-// PrintDefaults prints to standard error the default values of all defined command-line flags.
+// PrintDefaults prints, to standard error unless configured otherwise,
+// a usage message showing the default settings of all defined
+// command-line flags.
+// For an integer valued flag x, the default output has the form
+//	-x int
+//		usage-message-for-x (default 7)
+// The usage message will appear on a separate line for anything but
+// a bool flag with a one-byte name. For bool flags, the type is
+// omitted and if the flag name is one byte the usage message appears
+// on the same line. The parenthetical default is omitted if the
+// default is the zero value for the type. The listed type, here int,
+// can be changed by placing a back-quoted name in the flag's usage
+// string; the first such item in the message is taken to be a parameter
+// name to show in the message and the back quotes are stripped from
+// the message when displayed. For instance, given
+//	flag.String("I", "", "search `directory` for include files")
+// the output will be
+//	-I directory
+//		search directory for include files.
+//
+// To change the destination for flag messages, call CommandLine.SetOutput.
 func PrintDefaults() {
 	CommandLine.PrintDefaults()
 }
