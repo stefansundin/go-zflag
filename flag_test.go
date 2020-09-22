@@ -963,11 +963,10 @@ func TestHelp(t *testing.T) {
 		t.Fatal("expected no error; got ", err)
 	}
 	if !flag {
-		t.Error("flag was not set by --flag")
+		t.Fatal("flag was not set by --flag")
 	}
 	if helpCalled {
-		t.Error("help called for regular flag")
-		helpCalled = false // reset for next test
+		t.Fatal("help called for regular flag")
 	}
 
 	// Help flag should work as expected.
@@ -989,18 +988,15 @@ func TestHelp(t *testing.T) {
 	fs.DisableBuiltinHelp = true
 	for _, f := range []string{"--help", "-h"} {
 		err = fs.Parse([]string{f})
-		if err != nil {
-			t.Fatalf("while passing %s, error not expected, got %s\n", f, err)
+		if err == nil {
+			t.Fatalf("an error should have been returned, got nil")
+		}
+		if err.Error() != "unknown flag: --help" &&
+			err.Error() != "unknown shorthand flag: 'h' in -h" {
+			t.Fatalf("while passing %s, expected unknown flag error, got %s\n", f, err)
 		}
 		if helpCalled {
 			t.Fatalf("while passing %s, help was called\n", f)
-		}
-	}
-	// ... when disabled, any other shorthands should trigger an error
-	for _, f := range []string{"-help", "-helpxyz", "-hxyz"} {
-		err = fs.Parse([]string{f})
-		if err == nil {
-			t.Fatalf("while passing %s, error expected\n", f)
 		}
 	}
 	fs.DisableBuiltinHelp = false

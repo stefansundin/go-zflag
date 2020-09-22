@@ -1014,11 +1014,9 @@ func (f *FlagSet) parseLongArg(s string, args []string, fn parseFunc) (a []strin
 
 	if !exists || flag.ShorthandOnly {
 		switch {
-		case name == "help":
-			if !f.DisableBuiltinHelp {
-				f.usage()
-				err = ErrHelp
-			}
+		case !f.DisableBuiltinHelp && name == "help":
+			f.usage()
+			err = ErrHelp
 			return
 		case f.ParseErrorsWhitelist.UnknownFlags:
 			f.addUnknownFlag(s)
@@ -1068,11 +1066,9 @@ func (f *FlagSet) parseSingleShortArg(shorthands string, args []string, fn parse
 	flag, exists := f.shorthands[c]
 	if !exists {
 		switch {
-		case c == 'h':
-			if !f.DisableBuiltinHelp {
-				f.usage()
-				err = ErrHelp
-			}
+		case !f.DisableBuiltinHelp && c == 'h':
+			f.usage()
+			err = ErrHelp
 			return
 		case f.ParseErrorsWhitelist.UnknownFlags:
 			// '-f=arg arg ...'
