@@ -131,7 +131,7 @@ func (f *FlagSet) GetUint16Slice(name string) ([]uint16, error) {
 // Uint16SliceVar defines a uint16Slice flag with specified name, default value, and usage string.
 // The argument p pouints to a []uint16 variable in which to store the value of the flag.
 func (f *FlagSet) Uint16SliceVar(p *[]uint16, name string, value []uint16, usage string) {
-	f.VarP(newUint16SliceValue(value, p), name, "", usage)
+	f.Uint16SliceVarP(p, name, "", value, usage)
 }
 
 // Uint16SliceVarP is like Uint16SliceVar, but accepts a shorthand letter that can be used after a single dash.
@@ -147,25 +147,23 @@ func (f *FlagSet) Uint16SliceVarS(p *[]uint16, name, shorthand string, value []u
 // Uint16SliceVar defines a uint16[] flag with specified name, default value, and usage string.
 // The argument p pouints to a uint16[] variable in which to store the value of the flag.
 func Uint16SliceVar(p *[]uint16, name string, value []uint16, usage string) {
-	CommandLine.VarP(newUint16SliceValue(value, p), name, "", usage)
+	CommandLine.Uint16SliceVar(p, name, value, usage)
 }
 
 // Uint16SliceVarP is like Uint16SliceVar, but accepts a shorthand letter that can be used after a single dash.
 func Uint16SliceVarP(p *[]uint16, name, shorthand string, value []uint16, usage string) {
-	CommandLine.VarP(newUint16SliceValue(value, p), name, shorthand, usage)
+	CommandLine.Uint16SliceVarP(p, name, shorthand, value, usage)
 }
 
 // Uint16SliceVarS is like the Uint16SliceVar, but accepts a shorthand letter that can be used after a single dash, alone.
 func Uint16SliceVarS(p *[]uint16, name, shorthand string, value []uint16, usage string) {
-	CommandLine.VarS(newUint16SliceValue(value, p), name, shorthand, usage)
+	CommandLine.Uint16SliceVarS(p, name, shorthand, value, usage)
 }
 
 // Uint16Slice defines a []uint16 flag with specified name, default value, and usage string.
 // The return value is the address of a []uint16 variable that stores the value of the flag.
 func (f *FlagSet) Uint16Slice(name string, value []uint16, usage string) *[]uint16 {
-	p := []uint16{}
-	f.Uint16SliceVarP(&p, name, "", value, usage)
-	return &p
+	return f.Uint16SliceP(name, "", value, usage)
 }
 
 // Uint16SliceP is like Uint16Slice, but accepts a shorthand letter that can be used after a single dash.
@@ -185,7 +183,7 @@ func (f *FlagSet) Uint16SliceS(name, shorthand string, value []uint16, usage str
 // Uint16Slice defines a []uint16 flag with specified name, default value, and usage string.
 // The return value is the address of a []uint16 variable that stores the value of the flag.
 func Uint16Slice(name string, value []uint16, usage string) *[]uint16 {
-	return CommandLine.Uint16SliceP(name, "", value, usage)
+	return CommandLine.Uint16Slice(name, value, usage)
 }
 
 // Uint16SliceP is like Uint16Slice, but accepts a shorthand letter that can be used after a single dash.

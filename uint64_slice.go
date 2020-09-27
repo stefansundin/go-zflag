@@ -123,7 +123,7 @@ func (f *FlagSet) GetUint64Slice(name string) ([]uint64, error) {
 // Uint64SliceVar defines a uint64Slice flag with specified name, default value, and usage string.
 // The argument p pouints to a []uint64 variable in which to store the value of the flag.
 func (f *FlagSet) Uint64SliceVar(p *[]uint64, name string, value []uint64, usage string) {
-	f.VarP(newUint64SliceValue(value, p), name, "", usage)
+	f.Uint64SliceVarP(p, name, "", value, usage)
 }
 
 // Uint64SliceVarP is like Uint64SliceVar, but accepts a shorthand letter that can be used after a single dash.
@@ -139,25 +139,23 @@ func (f *FlagSet) Uint64SliceVarS(p *[]uint64, name, shorthand string, value []u
 // Uint64SliceVar defines a uint64[] flag with specified name, default value, and usage string.
 // The argument p pouints to a uint64[] variable in which to store the value of the flag.
 func Uint64SliceVar(p *[]uint64, name string, value []uint64, usage string) {
-	CommandLine.VarP(newUint64SliceValue(value, p), name, "", usage)
+	CommandLine.Uint64SliceVar(p, name, value, usage)
 }
 
 // Uint64SliceVarP is like Uint64SliceVar, but accepts a shorthand letter that can be used after a single dash.
 func Uint64SliceVarP(p *[]uint64, name, shorthand string, value []uint64, usage string) {
-	CommandLine.VarP(newUint64SliceValue(value, p), name, shorthand, usage)
+	CommandLine.Uint64SliceVarP(p, name, shorthand, value, usage)
 }
 
 // Uint64SliceVarS is like the Uint64SliceVar, but accepts a shorthand letter that can be used after a single dash, alone.
 func Uint64SliceVarS(p *[]uint64, name, shorthand string, value []uint64, usage string) {
-	CommandLine.VarS(newUint64SliceValue(value, p), name, shorthand, usage)
+	CommandLine.Uint64SliceVarS(p, name, shorthand, value, usage)
 }
 
 // Uint64Slice defines a []uint64 flag with specified name, default value, and usage string.
 // The return value is the address of a []uint64 variable that stores the value of the flag.
 func (f *FlagSet) Uint64Slice(name string, value []uint64, usage string) *[]uint64 {
-	p := []uint64{}
-	f.Uint64SliceVarP(&p, name, "", value, usage)
-	return &p
+	return f.Uint64SliceP(name, "", value, usage)
 }
 
 // Uint64SliceP is like Uint64Slice, but accepts a shorthand letter that can be used after a single dash.
@@ -177,7 +175,7 @@ func (f *FlagSet) Uint64SliceS(name, shorthand string, value []uint64, usage str
 // Uint64Slice defines a []uint64 flag with specified name, default value, and usage string.
 // The return value is the address of a []uint64 variable that stores the value of the flag.
 func Uint64Slice(name string, value []uint64, usage string) *[]uint64 {
-	return CommandLine.Uint64SliceP(name, "", value, usage)
+	return CommandLine.Uint64Slice(name, value, usage)
 }
 
 // Uint64SliceP is like Uint64Slice, but accepts a shorthand letter that can be used after a single dash.
