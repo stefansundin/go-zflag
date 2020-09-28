@@ -103,7 +103,7 @@ func TestEverything(t *testing.T) {
 func TestUsage(t *testing.T) {
 	called := false
 	ResetForTesting(func() { called = true })
-	if GetCommandLine().Parse([]string{"--x"}) == nil {
+	if CommandLine.Parse([]string{"--x"}) == nil {
 		t.Error("parse did not fail for unknown flag")
 	}
 	if called {
@@ -591,24 +591,24 @@ func TestShorthandLookup(t *testing.T) {
 	defer func() {
 		recover()
 	}()
-	flag = f.ShorthandLookup("ab")
+	f.ShorthandLookup("ab")
 	// should NEVER get here. lookup should panic. defer'd func should recover it.
 	t.Errorf("f.ShorthandLookup(\"ab\") did not panic")
 }
 
 func TestParse(t *testing.T) {
 	ResetForTesting(func() { t.Error("bad parse") })
-	testParse(GetCommandLine(), t)
+	testParse(CommandLine, t)
 }
 
 func TestParseAll(t *testing.T) {
 	ResetForTesting(func() { t.Error("bad parse") })
-	testParseAll(GetCommandLine(), t)
+	testParseAll(CommandLine, t)
 }
 
 func TestIgnoreUnknownFlags(t *testing.T) {
 	ResetForTesting(func() { t.Error("bad parse") })
-	testParseWithUnknownFlags(GetCommandLine(), t)
+	testParseWithUnknownFlags(CommandLine, t)
 }
 
 func TestFlagSetParse(t *testing.T) {
@@ -936,7 +936,7 @@ func TestChangingArgs(t *testing.T) {
 	defer func() { os.Args = oldArgs }()
 	os.Args = []string{"cmd", "--before", "subcmd"}
 	before := Bool("before", false, "")
-	if err := GetCommandLine().Parse(os.Args[1:]); err != nil {
+	if err := CommandLine.Parse(os.Args[1:]); err != nil {
 		t.Fatal(err)
 	}
 	cmd := Arg(0)
