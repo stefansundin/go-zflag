@@ -1,16 +1,14 @@
 /*
-Package pflag is a drop-in replacement for Go's flag package, implementing
-POSIX/GNU-style --flags.
-
-pflag is compatible with the GNU extensions to the POSIX recommendations
-for command-line options. See
+Package pflag is a drop-in replacement of Go's native flag package, implementing
+POSIX/GNU-style --flags. pflag is compatible with the GNU extensions to the POSIX
+recommendations for command-line options. See
 http://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html
 
-Usage:
+pflag is available under the same style of BSD license as the Go language,
+which can be found in the LICENSE file.
 
-pflag is a drop-in replacement of Go's native flag package. If you import
-pflag under the name "flag" then all code should continue to function
-with no changes.
+If you import pflag under the name "flag" then all code
+should continue to function with no changes.
 
 	import flag "github.com/cornfeedhobo/pflag"
 
