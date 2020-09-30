@@ -409,14 +409,13 @@ func testParseWithUnknownFlags(f *FlagSet, t *testing.T) {
 		t.Error("f.Parse() = true before Parse")
 	}
 	f.ParseErrorsWhitelist.UnknownFlags = true
-	var unknownFlags []string
-	f.SetUnknownFlags(&unknownFlags)
 
 	f.BoolP("boola", "a", false, "bool value")
 	f.BoolP("boolb", "b", false, "bool2 value")
 	f.BoolP("boolc", "c", false, "bool3 value")
 	f.BoolP("boold", "d", false, "bool4 value")
-	f.BoolP("boole", "e", false, "bool4 value")
+	f.BoolP("boole", "e", false, "bool5 value")
+	f.BoolP("boolf", "f", false, "bool6 value")
 	f.StringP("stringa", "s", "0", "string value")
 	f.StringP("stringz", "z", "0", "string value")
 	f.StringP("stringx", "x", "0", "string value")
@@ -444,7 +443,7 @@ func testParseWithUnknownFlags(f *FlagSet, t *testing.T) {
 		"--boole",
 		"--unknown6",
 		"",
-		"-uuuuu",
+		"-ufuuuu",
 		"",
 		"--unknown10",
 		"--unknown11",
@@ -460,19 +459,21 @@ func testParseWithUnknownFlags(f *FlagSet, t *testing.T) {
 		"stringy", "ee",
 		"stringo", "ovalue",
 		"boole", "true",
+		"boolf", "true",
 	}
-	wantUnknowns := []string{
-		"--unknown1", "unknown1Value",
-		"--unknown2=unknown2Value",
-		"-u=unknown3Value",
-		"-p", "unknown4Value",
-		"-q",
-		"--unknown7=unknown7value",
-		"--unknown8=unknown8value",
-		"--unknown6", "",
-		"-u", "-u", "-u", "-u", "-u", "",
-		"--unknown10",
-		"--unknown11",
+	wantUnknowns := []*UnknownFlag{
+		{"unknown1", "unknown1Value"},
+		{"unknown2", "unknown2Value"},
+		{"u", "unknown3Value"},
+		{"p", "unknown4Value"},
+		{"q", ""},
+		{"unknown7", "unknown7value"},
+		{"unknown8", "unknown8value"},
+		{"unknown6", ""},
+		{"u", ""},
+		{"u", "uuu"},
+		{"unknown10", ""},
+		{"unknown11", ""},
 	}
 	got := []string{}
 	store := func(flag *Flag, value string) error {
@@ -493,9 +494,9 @@ func testParseWithUnknownFlags(f *FlagSet, t *testing.T) {
 		t.Errorf("Got:  %v", got)
 		t.Errorf("Want: %v", want)
 	}
-	if !reflect.DeepEqual(unknownFlags, wantUnknowns) {
+	if !reflect.DeepEqual(f.GetUnknownFlags(), wantUnknowns) {
 		t.Errorf("f.Parse() failed to enumerate the unknown flags")
-		t.Errorf("Got:  %v", unknownFlags)
+		t.Errorf("Got:  %v", f.GetUnknownFlags())
 		t.Errorf("Want: %v", wantUnknowns)
 	}
 }
