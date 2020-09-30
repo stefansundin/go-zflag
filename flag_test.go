@@ -1401,3 +1401,51 @@ func TestVisitFlagOrder(t *testing.T) {
 		i++
 	})
 }
+
+func TestUnquoteUsage(t *testing.T) {
+
+	var buf bytes.Buffer
+	var fs = NewFlagSet(t.Name(), ContinueOnError)
+	fs.SetOutput(&buf)
+	want := "Usage of TestUnquoteUsage:\n"
+
+	var check = func(want string) {
+		fs.defaultUsage()
+		if want != buf.String() {
+			t.Fatalf("\nexpected:\n%s\n\ngot:\n%s", want, buf.String())
+		}
+		buf.Reset()
+	}
+
+	// normal usage
+	fs.String("flagA", "", "flagA: `ctype1`")
+	want += "      --flagA ctype1   flagA: ctype1\n"
+	check(want)
+
+	// custom type
+	fs.String("flagB", "", "flagB: `ctype2`")
+	fs.Lookup("flagB").UsageType = "foo"
+	want += "      --flagB foo      flagB: ctype2\n"
+	check(want)
+
+	// disable unquoting
+	fs.String("flagC", "", "flagC: `ctype3`")
+	fs.Lookup("flagC").DisableUnquoteUsage = true
+	want += "      --flagC string   flagC: `ctype3`\n"
+	fs.defaultUsage()
+	if want != buf.String() {
+		t.Fatalf("\nexpected:\n%s\n\ngot:\n%s", want, buf.String())
+	}
+	buf.Reset()
+
+	// custom type and disable unquoting
+	fs.String("flagD", "", "flagD: `ctype4`")
+	fs.Lookup("flagD").UsageType = "bar"
+	fs.Lookup("flagD").DisableUnquoteUsage = true
+	want += "      --flagD bar      flagD: `ctype4`\n"
+	fs.defaultUsage()
+	if want != buf.String() {
+		t.Fatalf("\nexpected:\n%s\n\ngot:\n%s", want, buf.String())
+	}
+	buf.Reset()
+}
