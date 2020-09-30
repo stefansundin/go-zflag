@@ -142,7 +142,7 @@ func (f *FlagSet) GetBoolSlice(name string) ([]bool, error) {
 // BoolSliceVar defines a boolSlice flag with specified name, default value, and usage string.
 // The argument p points to a []bool variable in which to store the value of the flag.
 func (f *FlagSet) BoolSliceVar(p *[]bool, name string, value []bool, usage string) {
-	f.VarP(newBoolSliceValue(value, p), name, "", usage)
+	f.BoolSliceVarP(p, name, "", value, usage)
 }
 
 // BoolSliceVarP is like BoolSliceVar, but accepts a shorthand letter that can be used after a single dash.
@@ -158,7 +158,7 @@ func (f *FlagSet) BoolSliceVarS(p *[]bool, name string, shorthand string, value 
 // BoolSliceVar defines a []bool flag with specified name, default value, and usage string.
 // The argument p points to a []bool variable in which to store the value of the flag.
 func BoolSliceVar(p *[]bool, name string, value []bool, usage string) {
-	CommandLine.BoolSliceVarP(p, name, "", value, usage)
+	CommandLine.BoolSliceVar(p, name, value, usage)
 }
 
 // BoolSliceVarP is like BoolSliceVar, but accepts a shorthand letter that can be used after a single dash.
@@ -174,9 +174,7 @@ func BoolSliceVarS(p *[]bool, name string, shorthand string, value []bool, usage
 // BoolSlice defines a []bool flag with specified name, default value, and usage string.
 // The return value is the address of a []bool variable that stores the value of the flag.
 func (f *FlagSet) BoolSlice(name string, value []bool, usage string) *[]bool {
-	p := []bool{}
-	f.BoolSliceVarP(&p, name, "", value, usage)
-	return &p
+	return f.BoolSliceP(name, "", value, usage)
 }
 
 // BoolSliceP is like BoolSlice, but accepts a shorthand letter that can be used after a single dash.
@@ -196,7 +194,7 @@ func (f *FlagSet) BoolSliceS(name string, shorthand string, value []bool, usage 
 // BoolSlice defines a []bool flag with specified name, default value, and usage string.
 // The return value is the address of a []bool variable that stores the value of the flag.
 func BoolSlice(name string, value []bool, usage string) *[]bool {
-	return CommandLine.BoolSliceP(name, "", value, usage)
+	return CommandLine.BoolSlice(name, value, usage)
 }
 
 // BoolSliceP is like BoolSlice, but accepts a shorthand letter that can be used after a single dash.

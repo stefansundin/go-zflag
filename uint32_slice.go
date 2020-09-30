@@ -131,7 +131,7 @@ func (f *FlagSet) GetUint32Slice(name string) ([]uint32, error) {
 // Uint32SliceVar defines a uint32Slice flag with specified name, default value, and usage string.
 // The argument p pouints to a []uint32 variable in which to store the value of the flag.
 func (f *FlagSet) Uint32SliceVar(p *[]uint32, name string, value []uint32, usage string) {
-	f.VarP(newUint32SliceValue(value, p), name, "", usage)
+	f.Uint32SliceVarP(p, name, "", value, usage)
 }
 
 // Uint32SliceVarP is like Uint32SliceVar, but accepts a shorthand letter that can be used after a single dash.
@@ -147,25 +147,23 @@ func (f *FlagSet) Uint32SliceVarS(p *[]uint32, name, shorthand string, value []u
 // Uint32SliceVar defines a uint32[] flag with specified name, default value, and usage string.
 // The argument p pouints to a uint32[] variable in which to store the value of the flag.
 func Uint32SliceVar(p *[]uint32, name string, value []uint32, usage string) {
-	CommandLine.VarP(newUint32SliceValue(value, p), name, "", usage)
+	CommandLine.Uint32SliceVar(p, name, value, usage)
 }
 
 // Uint32SliceVarP is like Uint32SliceVar, but accepts a shorthand letter that can be used after a single dash.
 func Uint32SliceVarP(p *[]uint32, name, shorthand string, value []uint32, usage string) {
-	CommandLine.VarP(newUint32SliceValue(value, p), name, shorthand, usage)
+	CommandLine.Uint32SliceVarP(p, name, shorthand, value, usage)
 }
 
 // Uint32SliceVarS is like the Uint32SliceVar, but accepts a shorthand letter that can be used after a single dash, alone.
 func Uint32SliceVarS(p *[]uint32, name, shorthand string, value []uint32, usage string) {
-	CommandLine.VarS(newUint32SliceValue(value, p), name, shorthand, usage)
+	CommandLine.Uint32SliceVarS(p, name, shorthand, value, usage)
 }
 
 // Uint32Slice defines a []uint32 flag with specified name, default value, and usage string.
 // The return value is the address of a []uint32 variable that stores the value of the flag.
 func (f *FlagSet) Uint32Slice(name string, value []uint32, usage string) *[]uint32 {
-	p := []uint32{}
-	f.Uint32SliceVarP(&p, name, "", value, usage)
-	return &p
+	return f.Uint32SliceP(name, "", value, usage)
 }
 
 // Uint32SliceP is like Uint32Slice, but accepts a shorthand letter that can be used after a single dash.
@@ -185,7 +183,7 @@ func (f *FlagSet) Uint32SliceS(name, shorthand string, value []uint32, usage str
 // Uint32Slice defines a []uint32 flag with specified name, default value, and usage string.
 // The return value is the address of a []uint32 variable that stores the value of the flag.
 func Uint32Slice(name string, value []uint32, usage string) *[]uint32 {
-	return CommandLine.Uint32SliceP(name, "", value, usage)
+	return CommandLine.Uint32Slice(name, value, usage)
 }
 
 // Uint32SliceP is like Uint32Slice, but accepts a shorthand letter that can be used after a single dash.

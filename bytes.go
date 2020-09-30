@@ -166,7 +166,7 @@ func (f *FlagSet) GetBytesBase64(name string) ([]byte, error) {
 // BytesBase64Var defines an []byte flag with specified name, default value, and usage string.
 // The argument p points to an []byte variable in which to store the value of the flag.
 func (f *FlagSet) BytesBase64Var(p *[]byte, name string, value []byte, usage string) {
-	f.VarP(newBytesBase64Value(value, p), name, "", usage)
+	f.BytesBase64VarP(p, name, "", value, usage)
 }
 
 // BytesBase64VarP is like BytesBase64Var, but accepts a shorthand letter that can be used after a single dash.
@@ -182,25 +182,23 @@ func (f *FlagSet) BytesBase64VarS(p *[]byte, name, shorthand string, value []byt
 // BytesBase64Var defines an []byte flag with specified name, default value, and usage string.
 // The argument p points to an []byte variable in which to store the value of the flag.
 func BytesBase64Var(p *[]byte, name string, value []byte, usage string) {
-	CommandLine.VarP(newBytesBase64Value(value, p), name, "", usage)
+	CommandLine.BytesBase64Var(p, name, value, usage)
 }
 
 // BytesBase64VarP is like BytesBase64Var, but accepts a shorthand letter that can be used after a single dash.
 func BytesBase64VarP(p *[]byte, name, shorthand string, value []byte, usage string) {
-	CommandLine.VarP(newBytesBase64Value(value, p), name, shorthand, usage)
+	CommandLine.BytesBase64VarP(p, name, shorthand, value, usage)
 }
 
 // BytesBase64VarS is like BytesBase64Var, but accepts a shorthand letter that can be used after a single dash, alone.
 func BytesBase64VarS(p *[]byte, name, shorthand string, value []byte, usage string) {
-	CommandLine.VarS(newBytesBase64Value(value, p), name, shorthand, usage)
+	CommandLine.BytesBase64VarS(p, name, shorthand, value, usage)
 }
 
 // BytesBase64 defines an []byte flag with specified name, default value, and usage string.
 // The return value is the address of an []byte variable that stores the value of the flag.
 func (f *FlagSet) BytesBase64(name string, value []byte, usage string) *[]byte {
-	p := new([]byte)
-	f.BytesBase64VarP(p, name, "", value, usage)
-	return p
+	return f.BytesBase64P(name, "", value, usage)
 }
 
 // BytesBase64P is like BytesBase64, but accepts a shorthand letter that can be used after a single dash.
@@ -220,7 +218,7 @@ func (f *FlagSet) BytesBase64S(name, shorthand string, value []byte, usage strin
 // BytesBase64 defines an []byte flag with specified name, default value, and usage string.
 // The return value is the address of an []byte variable that stores the value of the flag.
 func BytesBase64(name string, value []byte, usage string) *[]byte {
-	return CommandLine.BytesBase64P(name, "", value, usage)
+	return CommandLine.BytesBase64(name, value, usage)
 }
 
 // BytesBase64P is like BytesBase64, but accepts a shorthand letter that can be used after a single dash.
