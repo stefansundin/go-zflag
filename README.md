@@ -4,8 +4,8 @@
 
 [![GoDoc](https://godoc.org/github.com/cornfeedhobo/pflag?status.svg)](https://godoc.org/github.com/cornfeedhobo/pflag)
 [![Go Report Card](https://goreportcard.com/badge/github.com/cornfeedhobo/pflag)](https://goreportcard.com/report/github.com/cornfeedhobo/pflag)
+[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/cornfeedhobo/pflag?sort=semver)](https://github.com/cornfeedhobo/pflag/releases)
 ![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/cornfeedhobo/pflag/Tests/master)
-![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/cornfeedhobo/pflag?sort=semver)
 
 * [Installation](#installation)
   * [Installing this fork for cobra](#installing-this-fork-for-cobra)
