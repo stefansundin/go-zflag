@@ -32,7 +32,7 @@ const (
 // ParseErrorsAllowlist defines the parsing errors that can be ignored
 type ParseErrorsAllowlist struct {
 	// UnknownFlags will ignore unknown flags errors and continue parsing the rest of the flags.
-	// Consider using SetUnknownFlags/GetUnknownFlags if you need to know which unknown flags occured.
+	// See VisitUnknowns or GetUnknownFlags for collected unknowns.
 	UnknownFlags bool
 }
 
