@@ -1,6 +1,6 @@
 <!-- Contributor License Notice :
 
-By opening this pull request you and making a contribution to this project, you certify that:
+By opening a pull request and making a contribution to this project, you certify that:
 
 (a) The contribution was created in whole or in part by me and I have the right to submit it under the open source license indicated in the file; or
 
