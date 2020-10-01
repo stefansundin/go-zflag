@@ -408,7 +408,6 @@ func testParseWithUnknownFlags(f *FlagSet, t *testing.T) {
 	if f.Parsed() {
 		t.Error("f.Parse() = true before Parse")
 	}
-	f.ParseErrorsAllowlist.UnknownFlags = true
 
 	f.BoolP("boola", "a", false, "bool value")
 	f.BoolP("boolb", "b", false, "bool2 value")
@@ -609,6 +608,11 @@ func TestParseAll(t *testing.T) {
 
 func TestIgnoreUnknownFlags(t *testing.T) {
 	ResetForTesting(func() { t.Error("bad parse") })
+	CommandLine.ParseErrorsWhitelist.UnknownFlags = true
+	testParseWithUnknownFlags(CommandLine, t)
+
+	ResetForTesting(func() { t.Error("bad parse") })
+	CommandLine.ParseErrorsAllowlist.UnknownFlags = true
 	testParseWithUnknownFlags(CommandLine, t)
 }
 

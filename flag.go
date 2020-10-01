@@ -29,6 +29,13 @@ const (
 	PanicOnError
 )
 
+// ParseErrorsWhitelist defines the parsing errors that can be ignored
+type ParseErrorsWhitelist struct {
+	// UnknownFlags will ignore unknown flags errors and continue parsing the rest of the flags.
+	// See VisitUnknowns or GetUnknownFlags for collected unknowns.
+	UnknownFlags bool
+}
+
 // ParseErrorsAllowlist defines the parsing errors that can be ignored
 type ParseErrorsAllowlist struct {
 	// UnknownFlags will ignore unknown flags errors and continue parsing the rest of the flags.
@@ -51,7 +58,10 @@ type FlagSet struct {
 	// help/usage messages.
 	SortFlags bool
 
-	// ParseErrorsAllowlist is used to configure a whitelist of errors
+	// ParseErrorsWhitelist is used to configure a whitelist of errors
+	ParseErrorsWhitelist ParseErrorsWhitelist
+
+	// ParseErrorsAllowlist is used to configure an allowlist of errors
 	ParseErrorsAllowlist ParseErrorsAllowlist
 
 	// DisableBuiltinHelp toggles the built-in convention of handling -h and --help
@@ -289,7 +299,8 @@ func (f *FlagSet) VisitUnknowns(fn func(*UnknownFlag)) {
 }
 
 // GetUnknownFlags returns unknown flags found during Parse.
-// This requires ParseErrorsAllowlist.UnknownFlags to be set so that
+// This requires ParseErrorsWhitelist.UnknownFlags or
+// ParseErrorsAllowlist.UnknownFlags to be set so that
 // parsing does not abort on the first unknown flag.
 func (f *FlagSet) GetUnknownFlags() []*UnknownFlag {
 	return f.unknownFlags
@@ -305,7 +316,8 @@ func VisitUnknowns(fn func(*UnknownFlag)) {
 }
 
 // GetUnknownFlags returns unknown flags found during Parse.
-// This requires ParseErrorsAllowlist.UnknownFlags to be set so that
+// This requires ParseErrorsWhitelist.UnknownFlags or
+// ParseErrorsAllowlist.UnknownFlags to be set so that
 // parsing does not abort on the first unknown flag.
 func GetUnknownFlags() []*UnknownFlag {
 	return CommandLine.GetUnknownFlags()
@@ -980,7 +992,7 @@ func (f *FlagSet) parseLongArg(s string, args []string, fn parseFunc) (a []strin
 			err = ErrHelp
 			return
 		}
-		if !f.ParseErrorsAllowlist.UnknownFlags {
+		if !f.ParseErrorsWhitelist.UnknownFlags && !f.ParseErrorsAllowlist.UnknownFlags {
 			err = f.failf("unknown flag: --%s", name)
 			return
 		}
@@ -1001,11 +1013,11 @@ func (f *FlagSet) parseLongArg(s string, args []string, fn parseFunc) (a []strin
 			value = a[0]
 			a = a[1:]
 		}
-	} else if f.ParseErrorsAllowlist.UnknownFlags {
+	} else if f.ParseErrorsWhitelist.UnknownFlags || f.ParseErrorsAllowlist.UnknownFlags {
 		value = ""
 	}
 
-	if !exists && f.ParseErrorsAllowlist.UnknownFlags {
+	if !exists && (f.ParseErrorsWhitelist.UnknownFlags || f.ParseErrorsAllowlist.UnknownFlags) {
 		f.addUnknownFlag(name, value)
 		return
 	}
@@ -1030,7 +1042,7 @@ func (f *FlagSet) parseSingleShortArg(shorthands string, args []string, fn parse
 			err = ErrHelp
 			return
 		}
-		if !f.ParseErrorsAllowlist.UnknownFlags {
+		if !f.ParseErrorsWhitelist.UnknownFlags && !f.ParseErrorsAllowlist.UnknownFlags {
 			err = f.failf("unknown shorthand flag: %q in -%s", c, shorthands)
 			return
 		}
@@ -1058,11 +1070,11 @@ func (f *FlagSet) parseSingleShortArg(shorthands string, args []string, fn parse
 			value = args[0]
 			outArgs = args[1:]
 		}
-	} else if f.ParseErrorsAllowlist.UnknownFlags {
+	} else if f.ParseErrorsWhitelist.UnknownFlags || f.ParseErrorsAllowlist.UnknownFlags {
 		value = ""
 	}
 
-	if !exists && f.ParseErrorsAllowlist.UnknownFlags {
+	if !exists && (f.ParseErrorsWhitelist.UnknownFlags || f.ParseErrorsAllowlist.UnknownFlags) {
 		f.addUnknownFlag(string(c), value)
 		return
 	}
