@@ -50,12 +50,12 @@ Override the upstream module using the [newest release](https://github.com/cornf
 ``` bash
 pflag_upstream="github.com/spf13/pflag"
 pflag_fork="github.com/cornfeedhobo/pflag"
-pflag_release="$(curl -s https://api.github.com/repos/spf13/pflag/tags \
+pflag_fork_release="$(curl -s https://api.github.com/repos/cornfeedhobo/pflag/tags \
   | grep -o '"name": ".*"' \
   | head -1 \
   | cut -d':' -f2 \
   | tr -d '" ')"
-go mod edit -replace $pflag_upstream=$pflag_fork@$pflag_release
+go mod edit -replace $pflag_upstream=$pflag_fork@$pflag_fork_release
 ```
 
 ## Documentation
