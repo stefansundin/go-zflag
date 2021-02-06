@@ -38,14 +38,24 @@ go get github.com/cornfeedhobo/pflag
 Initialize your new app as normal
 
 ``` bash
-cobra init --pkg-name example.com/hello
-go mod init example.com/hello
+mkdir cmd && cd cmd
+cobra init myAwesomeCli --pkg-name github.com/username/repo
+cd ..
+go mod init github.com/username/repo
+go mod tidy
 ```
 
-Override the upstream module
+Override the upstream module using the [newest release](https://github.com/cornfeedhobo/pflag/releases).
 
 ``` bash
-go mod edit -replace github.com/spf13/pflag=github.com/cornfeedhobo/pflag
+pflag_upstream="github.com/spf13/pflag"
+pflag_fork="github.com/cornfeedhobo/pflag"
+pflag_release="$(curl -s https://api.github.com/repos/spf13/pflag/tags \
+  | grep -o '"name": ".*"' \
+  | head -1 \
+  | cut -d':' -f2 \
+  | tr -d '" ')"
+go mod edit -replace $pflag_upstream=$pflag_fork@$pflag_release
 ```
 
 ## Documentation
