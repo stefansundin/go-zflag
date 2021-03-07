@@ -17,6 +17,8 @@
   * [Hidden flags](#hidden-flags)
   * [Disable sorting of flags](#disable-sorting-of-flags)
   * [Supporting Go flags when using pflag](#supporting-go-flags-when-using-pflag)
+  * [Shorthand flags](#shorthand-flags)
+  * [Shorthand-only flags](#shorthand-only-flags)
 
 ## Installation
 
@@ -255,3 +257,24 @@ func main() {
 	flag.Parse()
 }
 ```
+
+### Shorthand flags
+
+A flag supporting both long and short formats can be created with any of the
+flag functions suffixed with `P`:
+
+``` go
+flag.BoolP("toggle", "t", false, "toggle help message")
+```
+
+### Shorthand-only flags
+
+A shorthand-only flag can be created with any of the flag functions suffixed
+with `S`:
+
+``` go
+flag.StringS("value", "l", "", "value help message")
+```
+
+This flag can be looked up using it's long name, but will only be parsed when
+the short form is passed.

@@ -142,6 +142,11 @@ func (f *FlagSet) Complex128SliceVarP(p *[]complex128, name, shorthand string, v
 	f.VarP(newComplex128SliceValue(value, p), name, shorthand, usage)
 }
 
+// Complex128SliceVarS is like Complex128SliceVar, but accepts a shorthand letter that can be used after a single dash, alone.
+func (f *FlagSet) Complex128SliceVarS(p *[]complex128, name, shorthand string, value []complex128, usage string) {
+	f.VarS(newComplex128SliceValue(value, p), name, shorthand, usage)
+}
+
 // Complex128SliceVar defines a complex128[] flag with specified name, default value, and usage string.
 // The argument p points to a complex128[] variable in which to store the value of the flag.
 func Complex128SliceVar(p *[]complex128, name string, value []complex128, usage string) {
@@ -151,6 +156,11 @@ func Complex128SliceVar(p *[]complex128, name string, value []complex128, usage 
 // Complex128SliceVarP is like Complex128SliceVar, but accepts a shorthand letter that can be used after a single dash.
 func Complex128SliceVarP(p *[]complex128, name, shorthand string, value []complex128, usage string) {
 	CommandLine.Complex128SliceVarP(p, name, shorthand, value, usage)
+}
+
+// Complex128SliceVarS is like Complex128SliceVar, but accepts a shorthand letter that can be used after a single dash, alone.
+func Complex128SliceVarS(p *[]complex128, name, shorthand string, value []complex128, usage string) {
+	CommandLine.Complex128SliceVarS(p, name, shorthand, value, usage)
 }
 
 // Complex128Slice defines a []complex128 flag with specified name, default value, and usage string.
@@ -166,6 +176,13 @@ func (f *FlagSet) Complex128SliceP(name, shorthand string, value []complex128, u
 	return &p
 }
 
+// Complex128SliceS is like Complex128Slice, but accepts a shorthand letter that can be used after a single dash, alone.
+func (f *FlagSet) Complex128SliceS(name, shorthand string, value []complex128, usage string) *[]complex128 {
+	p := []complex128{}
+	f.Complex128SliceVarS(&p, name, shorthand, value, usage)
+	return &p
+}
+
 // Complex128Slice defines a []complex128 flag with specified name, default value, and usage string.
 // The return value is the address of a []complex128 variable that stores the value of the flag.
 func Complex128Slice(name string, value []complex128, usage string) *[]complex128 {
@@ -175,4 +192,9 @@ func Complex128Slice(name string, value []complex128, usage string) *[]complex12
 // Complex128SliceP is like Complex128Slice, but accepts a shorthand letter that can be used after a single dash.
 func Complex128SliceP(name, shorthand string, value []complex128, usage string) *[]complex128 {
 	return CommandLine.Complex128SliceP(name, shorthand, value, usage)
+}
+
+// Complex128SliceS is like Complex128Slice, but accepts a shorthand letter that can be used after a single dash, alone.
+func Complex128SliceS(name, shorthand string, value []complex128, usage string) *[]complex128 {
+	return CommandLine.Complex128SliceS(name, shorthand, value, usage)
 }

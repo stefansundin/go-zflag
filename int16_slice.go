@@ -140,7 +140,7 @@ func (f *FlagSet) MustGetInt16Slice(name string) []int16 {
 // Int16SliceVar defines a int16Slice flag with specified name, default value, and usage string.
 // The argument p points to a []int16 variable in which to store the value of the flag.
 func (f *FlagSet) Int16SliceVar(p *[]int16, name string, value []int16, usage string) {
-	f.VarP(newInt16SliceValue(value, p), name, "", usage)
+	f.Int16SliceVarP(p, name, "", value, usage)
 }
 
 // Int16SliceVarP is like Int16SliceVar, but accepts a shorthand letter that can be used after a single dash.
@@ -148,23 +148,31 @@ func (f *FlagSet) Int16SliceVarP(p *[]int16, name, shorthand string, value []int
 	f.VarP(newInt16SliceValue(value, p), name, shorthand, usage)
 }
 
+// Int16SliceVarS is like Int16SliceVar, but accepts a shorthand letter that can be used after a single dash, alone.
+func (f *FlagSet) Int16SliceVarS(p *[]int16, name, shorthand string, value []int16, usage string) {
+	f.VarS(newInt16SliceValue(value, p), name, shorthand, usage)
+}
+
 // Int16SliceVar defines a int16[] flag with specified name, default value, and usage string.
 // The argument p points to a int16[] variable in which to store the value of the flag.
 func Int16SliceVar(p *[]int16, name string, value []int16, usage string) {
-	CommandLine.VarP(newInt16SliceValue(value, p), name, "", usage)
+	CommandLine.Int16SliceVar(p, name, value, usage)
 }
 
 // Int16SliceVarP is like Int16SliceVar, but accepts a shorthand letter that can be used after a single dash.
 func Int16SliceVarP(p *[]int16, name, shorthand string, value []int16, usage string) {
-	CommandLine.VarP(newInt16SliceValue(value, p), name, shorthand, usage)
+	CommandLine.Int16SliceVarP(p, name, shorthand, value, usage)
+}
+
+// Int16SliceVarS is like Int16SliceVar, but accepts a shorthand letter that can be used after a single dash, alone.
+func Int16SliceVarS(p *[]int16, name, shorthand string, value []int16, usage string) {
+	CommandLine.Int16SliceVarS(p, name, shorthand, value, usage)
 }
 
 // Int16Slice defines a []int16 flag with specified name, default value, and usage string.
 // The return value is the address of a []int16 variable that stores the value of the flag.
 func (f *FlagSet) Int16Slice(name string, value []int16, usage string) *[]int16 {
-	p := []int16{}
-	f.Int16SliceVarP(&p, name, "", value, usage)
-	return &p
+	return f.Int16SliceP(name, "", value, usage)
 }
 
 // Int16SliceP is like Int16Slice, but accepts a shorthand letter that can be used after a single dash.
@@ -174,13 +182,25 @@ func (f *FlagSet) Int16SliceP(name, shorthand string, value []int16, usage strin
 	return &p
 }
 
+// Int16SliceS is like Int16Slice, but accepts a shorthand letter that can be used after a single dash, alone.
+func (f *FlagSet) Int16SliceS(name, shorthand string, value []int16, usage string) *[]int16 {
+	p := []int16{}
+	f.Int16SliceVarS(&p, name, shorthand, value, usage)
+	return &p
+}
+
 // Int16Slice defines a []int16 flag with specified name, default value, and usage string.
 // The return value is the address of a []int16 variable that stores the value of the flag.
 func Int16Slice(name string, value []int16, usage string) *[]int16 {
-	return CommandLine.Int16SliceP(name, "", value, usage)
+	return CommandLine.Int16Slice(name, value, usage)
 }
 
 // Int16SliceP is like Int16Slice, but accepts a shorthand letter that can be used after a single dash.
 func Int16SliceP(name, shorthand string, value []int16, usage string) *[]int16 {
 	return CommandLine.Int16SliceP(name, shorthand, value, usage)
+}
+
+// Int16SliceS is like Int16Slice, but accepts a shorthand letter that can be used after a single dash, alone.
+func Int16SliceS(name, shorthand string, value []int16, usage string) *[]int16 {
+	return CommandLine.Int16SliceS(name, shorthand, value, usage)
 }

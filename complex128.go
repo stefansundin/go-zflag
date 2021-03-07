@@ -60,6 +60,11 @@ func (f *FlagSet) Complex128VarP(p *complex128, name, shorthand string, value co
 	f.VarP(newComplex128Value(value, p), name, shorthand, usage)
 }
 
+// Complex128VarS is like Complex128Var, but accepts a shorthand letter that can be used after a single dash, alone.
+func (f *FlagSet) Complex128VarS(p *complex128, name, shorthand string, value complex128, usage string) {
+	f.VarS(newComplex128Value(value, p), name, shorthand, usage)
+}
+
 // Complex128Var defines a complex128 flag with specified name, default value, and usage string.
 // The argument p points to a complex128 variable in which to store the value of the flag.
 func Complex128Var(p *complex128, name string, value complex128, usage string) {
@@ -69,6 +74,11 @@ func Complex128Var(p *complex128, name string, value complex128, usage string) {
 // Complex128VarP is like Complex128Var, but accepts a shorthand letter that can be used after a single dash.
 func Complex128VarP(p *complex128, name, shorthand string, value complex128, usage string) {
 	CommandLine.Complex128VarP(p, name, shorthand, value, usage)
+}
+
+// Complex128VarS is like Complex128Var, but accepts a shorthand letter that can be used after a single dash, alone.
+func Complex128VarS(p *complex128, name, shorthand string, value complex128, usage string) {
+	CommandLine.Complex128VarS(p, name, shorthand, value, usage)
 }
 
 // Complex128 defines a complex128 flag with specified name, default value, and usage string.
@@ -84,6 +94,13 @@ func (f *FlagSet) Complex128P(name, shorthand string, value complex128, usage st
 	return p
 }
 
+// Complex128S is like Complex128, but accepts a shorthand letter that can be used after a single dash, alone.
+func (f *FlagSet) Complex128S(name, shorthand string, value complex128, usage string) *complex128 {
+	p := new(complex128)
+	f.Complex128VarS(p, name, shorthand, value, usage)
+	return p
+}
+
 // Complex128 defines a complex128 flag with specified name, default value, and usage string.
 // The return value is the address of a complex128 variable that stores the value of the flag.
 func Complex128(name string, value complex128, usage string) *complex128 {
@@ -93,4 +110,9 @@ func Complex128(name string, value complex128, usage string) *complex128 {
 // Complex128P is like Complex128, but accepts a shorthand letter that can be used after a single dash.
 func Complex128P(name, shorthand string, value complex128, usage string) *complex128 {
 	return CommandLine.Complex128P(name, shorthand, value, usage)
+}
+
+// Complex128S is like Complex128, but accepts a shorthand letter that can be used after a single dash, alone.
+func Complex128S(name, shorthand string, value complex128, usage string) *complex128 {
+	return CommandLine.Complex128S(name, shorthand, value, usage)
 }
