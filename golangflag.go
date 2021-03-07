@@ -1,4 +1,3 @@
-// Copyright 2009 The Go Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
@@ -58,7 +57,7 @@ func (v *flagValueWrapper) Type() string {
 }
 
 // PFlagFromGoFlag will return a *pflag.Flag given a *flag.Flag
-// If the *flag.Flag.Name was a single character (ex: `v`) it will be accessiblei
+// If the *flag.Flag.Name was a single character (ex: `v`) it will be accessible
 // with both `-v` and `--v` in flags. If the golang flag was more than a single
 // character (ex: `verbose`) it will only be accessible via `--verbose`
 func PFlagFromGoFlag(goflag *goflag.Flag) *Flag {

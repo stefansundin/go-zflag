@@ -1,3 +1,6 @@
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package pflag
 
 // -- stringArray Value
@@ -30,18 +33,14 @@ func (s *stringArrayValue) Append(val string) error {
 
 func (s *stringArrayValue) Replace(val []string) error {
 	out := make([]string, len(val))
-	for i, d := range val {
-		out[i] = d
-	}
+	copy(out, val)
 	*s.value = out
 	return nil
 }
 
 func (s *stringArrayValue) GetSlice() []string {
 	out := make([]string, len(*s.value))
-	for i, d := range *s.value {
-		out[i] = d
-	}
+	copy(out, *s.value)
 	return out
 }
 

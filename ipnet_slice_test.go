@@ -1,3 +1,6 @@
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package pflag
 
 import (
@@ -13,10 +16,7 @@ func getCIDR(ip net.IP, cidr *net.IPNet, err error) net.IPNet {
 }
 
 func equalCIDR(c1 net.IPNet, c2 net.IPNet) bool {
-	if c1.String() == c2.String() {
-		return true
-	}
-	return false
+	return c1.String() == c2.String()
 }
 
 func setUpIPNetFlagSet(ipsp *[]net.IPNet) *FlagSet {

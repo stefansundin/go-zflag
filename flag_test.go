@@ -1,4 +1,3 @@
-// Copyright 2009 The Go Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
@@ -103,7 +102,7 @@ func TestEverything(t *testing.T) {
 func TestUsage(t *testing.T) {
 	called := false
 	ResetForTesting(func() { called = true })
-	if GetCommandLine().Parse([]string{"--x"}) == nil {
+	if CommandLine.Parse([]string{"--x"}) == nil {
 		t.Error("parse did not fail for unknown flag")
 	}
 	if called {
@@ -578,17 +577,17 @@ func TestShorthandLookup(t *testing.T) {
 
 func TestParse(t *testing.T) {
 	ResetForTesting(func() { t.Error("bad parse") })
-	testParse(GetCommandLine(), t)
+	testParse(CommandLine, t)
 }
 
 func TestParseAll(t *testing.T) {
 	ResetForTesting(func() { t.Error("bad parse") })
-	testParseAll(GetCommandLine(), t)
+	testParseAll(CommandLine, t)
 }
 
 func TestIgnoreUnknownFlags(t *testing.T) {
 	ResetForTesting(func() { t.Error("bad parse") })
-	testParseWithUnknownFlags(GetCommandLine(), t)
+	testParseWithUnknownFlags(CommandLine, t)
 }
 
 func TestFlagSetParse(t *testing.T) {
@@ -883,7 +882,7 @@ func TestChangingArgs(t *testing.T) {
 	defer func() { os.Args = oldArgs }()
 	os.Args = []string{"cmd", "--before", "subcmd"}
 	before := Bool("before", false, "")
-	if err := GetCommandLine().Parse(os.Args[1:]); err != nil {
+	if err := CommandLine.Parse(os.Args[1:]); err != nil {
 		t.Fatal(err)
 	}
 	cmd := Arg(0)

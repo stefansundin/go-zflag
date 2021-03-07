@@ -1,3 +1,6 @@
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package pflag
 
 import (
@@ -73,7 +76,7 @@ func (s *ipNetSliceValue) String() string {
 
 func ipNetSliceConv(val string) (interface{}, error) {
 	val = strings.Trim(val, "[]")
-	// Emtpy string would cause a slice with one (empty) entry
+	// Empty string would cause a slice with one (empty) entry
 	if len(val) == 0 {
 		return []net.IPNet{}, nil
 	}
