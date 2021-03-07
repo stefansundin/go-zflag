@@ -40,6 +40,15 @@ func (f *FlagSet) GetComplex128(name string) (complex128, error) {
 	return val.(complex128), nil
 }
 
+// MustGetComplex128 is like GetComplex128, but panics on error.
+func (f *FlagSet) MustGetComplex128(name string) complex128 {
+	val, err := f.GetComplex128(name)
+	if err != nil {
+		panic(err)
+	}
+	return val
+}
+
 // Complex128Var defines a complex128 flag with specified name, default value, and usage string.
 // The argument p points to a complex128 variable in which to store the value of the flag.
 func (f *FlagSet) Complex128Var(p *complex128, name string, value complex128, usage string) {

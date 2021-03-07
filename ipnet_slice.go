@@ -101,6 +101,15 @@ func (f *FlagSet) GetIPNetSlice(name string) ([]net.IPNet, error) {
 	return val.([]net.IPNet), nil
 }
 
+// MustGetIPNetSlice is like GetIPNetSlice, but panics on error.
+func (f *FlagSet) MustGetIPNetSlice(name string) []net.IPNet {
+	val, err := f.GetIPNetSlice(name)
+	if err != nil {
+		panic(err)
+	}
+	return val
+}
+
 // IPNetSliceVar defines a ipNetSlice flag with specified name, default value, and usage string.
 // The argument p points to a []net.IPNet variable in which to store the value of the flag.
 func (f *FlagSet) IPNetSliceVar(p *[]net.IPNet, name string, value []net.IPNet, usage string) {

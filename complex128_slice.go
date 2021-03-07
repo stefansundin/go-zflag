@@ -122,6 +122,15 @@ func (f *FlagSet) GetComplex128Slice(name string) ([]complex128, error) {
 	return val.([]complex128), nil
 }
 
+// MustGetComplex128Slice is like GetComplex128Slice, but panics on error.
+func (f *FlagSet) MustGetComplex128Slice(name string) []complex128 {
+	val, err := f.GetComplex128Slice(name)
+	if err != nil {
+		panic(err)
+	}
+	return val
+}
+
 // Complex128SliceVar defines a complex128Slice flag with specified name, default value, and usage string.
 // The argument p points to a []complex128 variable in which to store the value of the flag.
 func (f *FlagSet) Complex128SliceVar(p *[]complex128, name string, value []complex128, usage string) {
