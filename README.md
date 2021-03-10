@@ -21,6 +21,7 @@
   * [Shorthand-only flags](#shorthand-only-flags)
   * [Unknown flags](#unknown-flags)
   * [Custom flag types in usage](#custom-flag-types-in-usage)
+  * [Disable printing default value](#disable-printing-default-value)
 
 ## Installation
 
@@ -324,3 +325,20 @@ Output:
 ```
 
 _Note: This unquoting behavior can be disabled with `Flag.DisableUnquoteUsage`_.
+
+### Disable printing a flag's default value
+
+The printing of a flag's default value can be suppressed with `Flag.DisablePrintDefault`.
+
+**Example**:
+
+``` go
+flag.Int("in", -1, "help message")
+flag.Lookup("in").DisablePrintDefault = true
+```
+
+**Output**:
+
+``` plain
+  --in int   help message
+```
