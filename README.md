@@ -20,6 +20,7 @@
   * [Shorthand flags](#shorthand-flags)
   * [Shorthand-only flags](#shorthand-only-flags)
   * [Unknown flags](#unknown-flags)
+  * [Custom flag types in usage](#custom-flag-types-in-usage)
 
 ## Installation
 
@@ -291,3 +292,35 @@ flag.Parse()
 ```
 
 These can then be obtained as a slice of strings using `FlagSet.GetUnknownFlags()`.
+
+### Custom flag types in usage
+
+There are two methods to set a custom type to be printed in the usage.
+
+First, it's possible to set explicitly with `CustomUsageType`:
+
+``` go
+flag.String("character", "", "character name")
+flag.Lookup("character").CustomUsageType = "enum"
+```
+
+Output:
+
+``` plain
+  --character enum   character name (default "")
+```
+
+Alternatively, it's possbile to include backticks around a single word in the
+usage string, which will be extracted and printed with the usage:
+
+``` go
+flag.String("character", "", "`character` name")
+```
+
+Output:
+
+``` plain
+  --character character   character name (default "")
+```
+
+_Note: This unquoting behavior can be disabled with `Flag.DisableUnquoteUsage`_.

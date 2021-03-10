@@ -80,6 +80,8 @@ type Flag struct {
 	Shorthand           string              // one-letter abbreviated flag
 	ShorthandOnly       bool                // If the user set only the shorthand
 	Usage               string              // help message
+	CustomUsageType     string              // flag type displayed in the help message
+	DisableUnquoteUsage bool                // toggle unquoting and extraction of type from usage
 	Value               Value               // value as set
 	DefValue            string              // default value (as text); for usage message
 	Changed             bool                // If the user set the value (or if left to default)
@@ -521,47 +523,56 @@ func (f *Flag) defaultIsZeroValue() bool {
 // If there are no back quotes, the name is an educated guess of the
 // type of the flag's value, or the empty string if the flag is boolean.
 func UnquoteUsage(flag *Flag) (name string, usage string) {
-	// Look for a back-quoted name, but avoid the strings package.
+	name = flag.CustomUsageType
 	usage = flag.Usage
-	for i := 0; i < len(usage); i++ {
-		if usage[i] == '`' {
-			for j := i + 1; j < len(usage); j++ {
-				if usage[j] == '`' {
-					name = usage[i+1 : j]
-					usage = usage[:i] + name + usage[j+1:]
-					return name, usage
+
+	// Look for a back-quoted name, but avoid the strings package.
+	if !flag.DisableUnquoteUsage {
+		for i := 0; i < len(usage); i++ {
+			if usage[i] == '`' {
+				for j := i + 1; j < len(usage); j++ {
+					if usage[j] == '`' {
+						extracted := usage[i+1 : j]
+						if name == "" {
+							name = extracted
+						}
+						usage = usage[:i] + extracted + usage[j+1:]
+						return
+					}
 				}
+				break // Only one back quote; use type name.
 			}
-			break // Only one back quote; use type name.
 		}
 	}
 
-	name = flag.Value.Type()
-	switch name {
-	case "bool":
-		name = ""
-	case "boolSlice":
-		name = "bools"
-	case "complex128":
-		name = "complex"
-	case "complex128Slice":
-		name = "complexes"
-	case "durationSlice":
-		name = "durations"
-	case "float32", "float64":
-		name = "float"
-	case "floatSlice", "float32Slice", "float64Slice":
-		name = "floats"
-	case "int8", "int16", "int32", "int64":
-		name = "int"
-	case "intSlice", "int8Slice", "int16Slice", "int32Slice", "int64Slice":
-		name = "ints"
-	case "stringSlice":
-		name = "strings"
-	case "uint8", "uint16", "uint32", "uint64":
-		name = "uint"
-	case "uintSlice", "uint8Slice", "uint16Slice", "uint32Slice", "uint64Slice":
-		name = "uints"
+	if name == "" {
+		name = flag.Value.Type()
+		switch name {
+		case "bool":
+			name = ""
+		case "boolSlice":
+			name = "bools"
+		case "complex128":
+			name = "complex"
+		case "complex128Slice":
+			name = "complexes"
+		case "durationSlice":
+			name = "durations"
+		case "float32", "float64":
+			name = "float"
+		case "floatSlice", "float32Slice", "float64Slice":
+			name = "floats"
+		case "int8", "int16", "int32", "int64":
+			name = "int"
+		case "intSlice", "int8Slice", "int16Slice", "int32Slice", "int64Slice":
+			name = "ints"
+		case "stringSlice":
+			name = "strings"
+		case "uint8", "uint16", "uint32", "uint64":
+			name = "uint"
+		case "uintSlice", "uint8Slice", "uint16Slice", "uint32Slice", "uint64Slice":
+			name = "uints"
+		}
 	}
 
 	return
