@@ -459,6 +459,19 @@ func testParseWithUnknownFlags(f *FlagSet, t *testing.T) {
 		"stringo", "ovalue",
 		"boole", "true",
 	}
+	wantUnknowns := []string{
+		"--unknown1", "unknown1Value",
+		"--unknown2=unknown2Value",
+		"-u=unknown3Value",
+		"-p", "unknown4Value",
+		"-q",
+		"--unknown7=unknown7value",
+		"--unknown8=unknown8value",
+		"--unknown6", "",
+		"-uuuuu",
+		"--unknown10",
+		"--unknown11",
+	}
 	got := []string{}
 	store := func(flag *Flag, value string) error {
 		got = append(got, flag.Name)
@@ -471,12 +484,18 @@ func testParseWithUnknownFlags(f *FlagSet, t *testing.T) {
 		t.Errorf("expected no error, got %s", err)
 	}
 	if !f.Parsed() {
-		t.Errorf("f.Parse() = false after Parse")
+		t.Errorf("f.Parsed() = false after Parse")
 	}
 	if !reflect.DeepEqual(got, want) {
-		t.Errorf("f.ParseAll() fail to restore the args")
+		t.Errorf("f.Parse() failed to parse with unknown flags")
 		t.Errorf("Got:  %v", got)
 		t.Errorf("Want: %v", want)
+	}
+	gotUnknowns := f.GetUnknownFlags()
+	if !reflect.DeepEqual(gotUnknowns, wantUnknowns) {
+		t.Errorf("f.Parse() failed to enumerate the unknown args args")
+		t.Errorf("Got:  %v", gotUnknowns)
+		t.Errorf("Want: %v", wantUnknowns)
 	}
 }
 

@@ -19,6 +19,7 @@
   * [Supporting Go flags when using pflag](#supporting-go-flags-when-using-pflag)
   * [Shorthand flags](#shorthand-flags)
   * [Shorthand-only flags](#shorthand-only-flags)
+  * [Unknown flags](#unknown-flags)
 
 ## Installation
 
@@ -278,3 +279,15 @@ flag.StringS("value", "l", "", "value help message")
 
 This flag can be looked up using it's long name, but will only be parsed when
 the short form is passed.
+
+### Unknown flags
+
+Normally pflag will error when an unknown flag is passed, but it's also possible
+to disable that using `FlagSet.ParseErrorsWhitelist.UnknownFlags`:
+
+``` go
+flags.ParseErrorsWhitelist.UnknownFlags = true
+flag.Parse()
+```
+
+These can then be obtained as a slice of strings using `FlagSet.GetUnknownFlags()`.

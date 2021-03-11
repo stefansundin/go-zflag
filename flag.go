@@ -32,6 +32,7 @@ const (
 // ParseErrorsWhitelist defines the parsing errors that can be ignored
 type ParseErrorsWhitelist struct {
 	// UnknownFlags will ignore unknown flags errors and continue parsing rest of the flags
+	// See GetUnknownFlags to retrieve collected unknowns.
 	UnknownFlags bool
 }
 
@@ -70,6 +71,7 @@ type FlagSet struct {
 	normalizeNameFunc func(f *FlagSet, name string) NormalizedName
 
 	addedGoFlagSets []*goflag.FlagSet
+	unknownFlags    []string
 }
 
 // A Flag represents the state of a flag.
@@ -181,15 +183,10 @@ func (f *FlagSet) SetOutput(output io.Writer) {
 	f.output = output
 }
 
-// VisitAll visits the flags in lexicographical order or
-// in primordial order if f.SortFlags is false, calling fn for each.
+// GetAllFlags return the flags in lexicographical order or
+// in primordial order if f.SortFlags is false.
 // It visits all flags, even those not set.
-func (f *FlagSet) VisitAll(fn func(*Flag)) {
-	if len(f.formal) == 0 {
-		return
-	}
-
-	var flags []*Flag
+func (f *FlagSet) GetAllFlags() (flags []*Flag) {
 	if f.SortFlags {
 		if len(f.formal) != len(f.sortedFormal) {
 			f.sortedFormal = sortFlags(f.formal)
@@ -198,8 +195,17 @@ func (f *FlagSet) VisitAll(fn func(*Flag)) {
 	} else {
 		flags = f.orderedFormal
 	}
+	return
+}
 
-	for _, flag := range flags {
+// VisitAll visits the flags in lexicographical order or
+// in primordial order if f.SortFlags is false, calling fn for each.
+// It visits all flags, even those not set.
+func (f *FlagSet) VisitAll(fn func(*Flag)) {
+	if len(f.formal) == 0 {
+		return
+	}
+	for _, flag := range f.GetAllFlags() {
 		fn(flag)
 	}
 }
@@ -220,11 +226,32 @@ func (f *FlagSet) HasAvailableFlags() bool {
 	return false
 }
 
+// GetAllFlags return the flags in lexicographical order or
+// in primordial order if f.SortFlags is false.
+func GetAllFlags() []*Flag {
+	return CommandLine.GetAllFlags()
+}
+
 // VisitAll visits the command-line flags in lexicographical order or
 // in primordial order if f.SortFlags is false, calling fn for each.
 // It visits all flags, even those not set.
 func VisitAll(fn func(*Flag)) {
 	CommandLine.VisitAll(fn)
+}
+
+// GetFlags return the flags in lexicographical order or
+// in primordial order if f.SortFlags is false.
+// It visits only those flags that have been set.
+func (f *FlagSet) GetFlags() (flags []*Flag) {
+	if f.SortFlags {
+		if len(f.actual) != len(f.sortedActual) {
+			f.sortedActual = sortFlags(f.actual)
+		}
+		flags = f.sortedActual
+	} else {
+		flags = f.orderedActual
+	}
+	return
 }
 
 // Visit visits the flags in lexicographical order or
@@ -234,20 +261,15 @@ func (f *FlagSet) Visit(fn func(*Flag)) {
 	if len(f.actual) == 0 {
 		return
 	}
-
-	var flags []*Flag
-	if f.SortFlags {
-		if len(f.actual) != len(f.sortedActual) {
-			f.sortedActual = sortFlags(f.actual)
-		}
-		flags = f.sortedActual
-	} else {
-		flags = f.orderedActual
-	}
-
-	for _, flag := range flags {
+	for _, flag := range f.GetFlags() {
 		fn(flag)
 	}
+}
+
+// GetFlags return the flags in lexicographical order or
+// in primordial order if f.SortFlags is false.
+func GetFlags() []*Flag {
+	return CommandLine.GetFlags()
 }
 
 // Visit visits the command-line flags in lexicographical order or
@@ -255,6 +277,24 @@ func (f *FlagSet) Visit(fn func(*Flag)) {
 // It visits only those flags that have been set.
 func Visit(fn func(*Flag)) {
 	CommandLine.Visit(fn)
+}
+
+func (f *FlagSet) addUnknownFlag(s string) {
+	f.unknownFlags = append(f.unknownFlags, s)
+}
+
+// GetUnknownFlags returns unknown flags in the order they were Parsed.
+// This requires ParseErrorsWhitelist.UnknownFlags to be set so that parsing does
+// not abort on the first unknown flag.
+func (f *FlagSet) GetUnknownFlags() []string {
+	return f.unknownFlags
+}
+
+// GetUnknownFlags returns unknown command-line flags in the order they were Parsed.
+// This requires ParseErrorsWhitelist.UnknownFlags to be set so that parsing does
+// not abort on the first unknown flag.
+func GetUnknownFlags() []string {
+	return CommandLine.GetUnknownFlags()
 }
 
 // Lookup returns the Flag structure of the named flag, returning nil if none exists.
@@ -876,7 +916,7 @@ func (f *FlagSet) usage() {
 //--unknown (args will be empty)
 //--unknown --next-flag ... (args will be --next-flag ...)
 //--unknown arg ... (args will be arg ...)
-func stripUnknownFlagValue(args []string) []string {
+func (f *FlagSet) stripUnknownFlagValue(args []string) []string {
 	if len(args) == 0 {
 		//--unknown
 		return args
@@ -890,6 +930,7 @@ func stripUnknownFlagValue(args []string) []string {
 
 	//--unknown arg ... (args will be arg ...)
 	if len(args) > 1 {
+		f.addUnknownFlag(args[0])
 		return args[1:]
 	}
 	return nil
@@ -916,10 +957,11 @@ func (f *FlagSet) parseLongArg(s string, args []string, fn parseFunc) (outArgs [
 		case f.ParseErrorsWhitelist.UnknownFlags || (flag != nil && flag.ShorthandOnly):
 			// --unknown=unknownval arg ...
 			// we do not want to lose arg in this case
+			f.addUnknownFlag(s)
 			if len(split) >= 2 {
 				return
 			}
-			outArgs = stripUnknownFlagValue(outArgs)
+			outArgs = f.stripUnknownFlagValue(outArgs)
 			return
 		default:
 			err = f.failf("unknown flag: --%s", name)
@@ -946,7 +988,7 @@ func (f *FlagSet) parseLongArg(s string, args []string, fn parseFunc) (outArgs [
 
 	err = fn(flag, value)
 	if err != nil {
-		f.failf(err.Error())
+		err = f.failf(err.Error())
 	}
 	return
 }
@@ -964,13 +1006,17 @@ func (f *FlagSet) parseSingleShortArg(shorthands string, args []string, fn parse
 			err = ErrHelp
 			return
 		case f.ParseErrorsWhitelist.UnknownFlags:
-			// '-f=arg arg ...'
-			// we do not want to lose arg in this case
-			if len(shorthands) > 2 && shorthands[1] == '=' {
+			if len(shorthands) > 2 {
+				// '-f...'
+				// we do not want to lose anything in this case
+				f.addUnknownFlag("-" + shorthands)
 				outShorts = ""
 				return
 			}
-			outArgs = stripUnknownFlagValue(outArgs)
+			f.addUnknownFlag("-" + string(char))
+			if len(outShorts) == 0 {
+				outArgs = f.stripUnknownFlagValue(outArgs)
+			}
 			return
 		default:
 			err = f.failf("unknown shorthand flag: %q in -%s", char, shorthands)
@@ -1006,18 +1052,18 @@ func (f *FlagSet) parseSingleShortArg(shorthands string, args []string, fn parse
 
 	err = fn(flag, value)
 	if err != nil {
-		f.failf(err.Error())
+		err = f.failf(err.Error())
 	}
 	return
 }
 
-func (f *FlagSet) parseShortArg(s string, args []string, fn parseFunc) (a []string, err error) {
-	a = args
+func (f *FlagSet) parseShortArg(s string, args []string, fn parseFunc) (outArgs []string, err error) {
+	outArgs = args
 	shorthands := s[1:]
 
 	// "shorthands" can be a series of shorthand letters of flags (e.g. "-vvv").
 	for len(shorthands) > 0 {
-		shorthands, a, err = f.parseSingleShortArg(shorthands, args, fn)
+		shorthands, outArgs, err = f.parseSingleShortArg(shorthands, args, fn)
 		if err != nil {
 			return
 		}
