@@ -971,41 +971,129 @@ func TestChangingArgs(t *testing.T) {
 
 // Test that -help invokes the usage message and returns ErrHelp.
 func TestHelp(t *testing.T) {
+
 	var helpCalled = false
 	fs := NewFlagSet("help test", ContinueOnError)
 	fs.Usage = func() { helpCalled = true }
+
 	var flag bool
 	fs.BoolVar(&flag, "flag", false, "regular flag")
+
 	// Regular flag invocation should work
 	err := fs.Parse([]string{"--flag=true"})
 	if err != nil {
 		t.Fatal("expected no error; got ", err)
 	}
 	if !flag {
-		t.Error("flag was not set by --flag")
+		t.Fatal("flag was not set by --flag")
 	}
 	if helpCalled {
-		t.Error("help called for regular flag")
+		t.Fatal("help called for regular flag")
 		helpCalled = false // reset for next test
 	}
+
 	// Help flag should work as expected.
-	err = fs.Parse([]string{"--help"})
-	if err == nil {
-		t.Fatal("error expected")
+	for _, f := range []string{"--help", "-h", "-help", "-helpxyz", "-hxyz"} {
+		err = fs.Parse([]string{f})
+		if err == nil {
+			t.Fatalf("while passing %s, error expected\n", f)
+		}
+		if err != ErrHelp {
+			t.Fatalf("while passing %s, expected ErrHelp; got %s\n", f, err)
+		}
+		if !helpCalled {
+			t.Fatalf("while passing %s, help was not called\n", f)
+		}
+		helpCalled = false
 	}
-	if err != ErrHelp {
-		t.Fatal("expected ErrHelp; got ", err)
+
+	// Help flag should not work when disabled
+	fs.DisableBuiltinHelp = true
+	for _, f := range []string{"--help", "-h"} {
+		err := fs.Parse([]string{f})
+		if err == nil {
+			t.Fatalf("while passing %s, error expected", f)
+		}
+		if err.Error() != "unknown flag: --help" &&
+			err.Error() != "unknown shorthand flag: 'h' in -h" {
+
+			t.Fatalf("while passing %s, unknown flag error expected, got %s\n", f, err)
+		}
+		if !helpCalled {
+			// Help should be triggered because this is an unknown, but not because the help flag was called
+			t.Fatalf("while passing %s, help was not called\n", f)
+		}
 	}
-	if !helpCalled {
-		t.Fatal("help was not called")
+	helpCalled = false
+	// ... when disabled, any other shorthands should trigger an error
+	for _, f := range []string{"-help", "-helpxyz", "-hxyz"} {
+		err = fs.Parse([]string{f})
+		if err == nil {
+			t.Fatalf("while passing %s, error expected\n", f)
+		}
 	}
+	helpCalled = false
+	fs.ParseErrorsWhitelist.UnknownFlags = true
+	for _, f := range []string{"--help", "-h"} {
+		err := fs.Parse([]string{f})
+		t.Logf("help called: %v\n", helpCalled)
+		if err != nil {
+			t.Fatalf("while passing %s, error not expected, got %s\n", f, err)
+		}
+		if helpCalled {
+			// Help should be triggered because this is an unknown, but not because the help flag was called
+			t.Fatalf("while passing %s, help was not called\n", f)
+		}
+	}
+	fs.DisableBuiltinHelp = false
+
 	// If we define a help flag, that should override.
 	var help bool
-	fs.BoolVar(&help, "help", false, "help flag")
-	helpCalled = false
+	fs.BoolVarP(&help, "help", "h", false, "help flag")
 	err = fs.Parse([]string{"--help"})
 	if err != nil {
 		t.Fatal("expected no error for defined --help; got ", err)
+	}
+	if !help {
+		t.Fatal("help should be true for defined --help")
+	}
+	if helpCalled {
+		t.Fatal("help was called; should not have been for defined help flag")
+	}
+	help = false
+	// ... including the shorthand
+	err = fs.Parse([]string{"-h"})
+	if err != nil {
+		t.Fatal("expected no error for defined -h; got ", err)
+	}
+	if !help {
+		t.Fatal("help should be true for defined -h")
+	}
+	if helpCalled {
+		t.Fatal("help was called; should not have been for defined help flag")
+	}
+	help = false
+
+	// If we define a help flag, that should override when the built in help flag is disabled.
+	fs.DisableBuiltinHelp = true
+	err = fs.Parse([]string{"--help"})
+	if err != nil {
+		t.Fatal("expected no error for defined --help; got ", err)
+	}
+	if !help {
+		t.Fatal("help should be true for defined --help")
+	}
+	if helpCalled {
+		t.Fatal("help was called; should not have been for defined help flag")
+	}
+	help = false
+	// ... including the shorthand
+	err = fs.Parse([]string{"-h"})
+	if err != nil {
+		t.Fatal("expected no error for defined -h; got ", err)
+	}
+	if !help {
+		t.Fatal("help should be true for defined -h")
 	}
 	if helpCalled {
 		t.Fatal("help was called; should not have been for defined help flag")

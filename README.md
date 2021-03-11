@@ -22,6 +22,7 @@
   * [Unknown flags](#unknown-flags)
   * [Custom flag types in usage](#custom-flag-types-in-usage)
   * [Disable printing default value](#disable-printing-default-value)
+  * [Disable built-in help flags](#disable-built-in-help-flags)
 
 ## Installation
 
@@ -341,4 +342,15 @@ flag.Lookup("in").DisablePrintDefault = true
 
 ``` plain
   --in int   help message
+```
+
+### Disable built-in help flags
+
+Normally pflag will handle `--help` and `-h` when the flags aren't explicitly defined.
+
+If for some reason there is a need to capture the error returned in this condition, it
+is possible to disable this built-in handling.
+
+``` go
+myFlagSet.DisableBuiltinHelp = true
 ```
