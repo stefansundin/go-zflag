@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"net"
 	"os"
+	"os/exec"
 	"reflect"
 	"sort"
 	"strconv"
@@ -105,8 +106,8 @@ func TestUsage(t *testing.T) {
 	if CommandLine.Parse([]string{"--x"}) == nil {
 		t.Error("parse did not fail for unknown flag")
 	}
-	if called {
-		t.Error("did call Usage while using ContinueOnError")
+	if !called {
+		t.Error("did not call Usage for unknown flag")
 	}
 }
 
@@ -859,7 +860,7 @@ func TestSetOutput(t *testing.T) {
 	flags.Init("test", ContinueOnError)
 	flags.Parse([]string{"--unknown"})
 	if out := buf.String(); !strings.Contains(out, "--unknown") {
-		t.Logf("expected output mentioning unknown; got %q", out)
+		t.Fatalf("expected output mentioning unknown; got %q", out)
 	}
 }
 
@@ -870,8 +871,36 @@ func TestOutput(t *testing.T) {
 	flags.SetOutput(&buf)
 	fmt.Fprint(flags.Output(), expect)
 	if out := buf.String(); !strings.Contains(out, expect) {
-		t.Errorf("expected output %q; got %q", expect, out)
+		t.Fatalf("expected output %q; got %q", expect, out)
 	}
+}
+
+func TestOutputExitOnError(t *testing.T) {
+	if os.Getenv("PFLAG_CRASH_TEST") == "1" {
+		CommandLine = NewFlagSet(t.Name(), ExitOnError)
+		os.Args = []string{t.Name(), "--unknown"}
+		Parse()
+		t.Fatal("this error should not be triggered")
+		return
+	}
+	mockStdout := bytes.NewBufferString("")
+	mockStderr := bytes.NewBufferString("")
+	cmd := exec.Command(os.Args[0], "-test.run="+t.Name())
+	cmd.Env = append(os.Environ(), "PFLAG_CRASH_TEST=1")
+	cmd.Stdout = mockStdout
+	cmd.Stderr = mockStderr
+	err := cmd.Run()
+	if e, ok := err.(*exec.ExitError); ok && !e.Success() {
+		want := "unknown flag: --unknown\nUsage of " + t.Name() + ":\n"
+		if got := mockStderr.String(); got != want {
+			t.Errorf("got '%s', want '%s'", got, want)
+		}
+		if got := mockStdout.String(); len(got) != 0 {
+			t.Errorf("stdout should be empty, got: %s", got)
+		}
+		return
+	}
+	t.Fatal("this error should not be triggered")
 }
 
 // This tests that one can reset the flags. This still works but not well, and is

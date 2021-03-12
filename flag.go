@@ -820,10 +820,8 @@ func VarP(value Value, name, shorthand, usage string) {
 // returns the error.
 func (f *FlagSet) failf(format string, a ...interface{}) error {
 	err := fmt.Errorf(format, a...)
-	if f.errorHandling != ContinueOnError {
-		fmt.Fprintln(f.Output(), err)
-		f.usage()
-	}
+	fmt.Fprintln(f.Output(), err)
+	f.usage()
 	return err
 }
 
@@ -1028,11 +1026,7 @@ func (f *FlagSet) parseArgs(args []string, fn parseFunc) (err error) {
 	return
 }
 
-// Parse parses flag definitions from the argument list, which should not
-// include the command name.  Must be called after all flags in the FlagSet
-// are defined and before flags are accessed by the program.
-// The return value will be ErrHelp if -help was set but not defined.
-func (f *FlagSet) Parse(arguments []string) error {
+func (f *FlagSet) parseAll(arguments []string, fn parseFunc) error {
 	if f.addedGoFlagSets != nil {
 		for _, goFlagSet := range f.addedGoFlagSets {
 			if err := goFlagSet.Parse(nil); err != nil {
@@ -1048,23 +1042,32 @@ func (f *FlagSet) Parse(arguments []string) error {
 
 	f.args = make([]string, 0, len(arguments))
 
-	set := func(flag *Flag, value string) error {
-		return f.Set(flag.Name, value)
-	}
-
-	err := f.parseArgs(arguments, set)
+	err := f.parseArgs(arguments, fn)
 	if err != nil {
 		switch f.errorHandling {
 		case ContinueOnError:
 			return err
 		case ExitOnError:
-			fmt.Println(err)
+			if err == ErrHelp {
+				os.Exit(0)
+			}
 			os.Exit(2)
 		case PanicOnError:
 			panic(err)
 		}
 	}
 	return nil
+}
+
+// Parse parses flag definitions from the argument list, which should not
+// include the command name.  Must be called after all flags in the FlagSet
+// are defined and before flags are accessed by the program.
+// The return value will be ErrHelp if -help was set but not defined.
+func (f *FlagSet) Parse(arguments []string) error {
+	set := func(flag *Flag, value string) error {
+		return f.Set(flag.Name, value)
+	}
+	return f.parseAll(arguments, set)
 }
 
 type parseFunc func(flag *Flag, value string) error
@@ -1075,21 +1078,7 @@ type parseFunc func(flag *Flag, value string) error
 // accessed by the program. The return value will be ErrHelp if -help was set
 // but not defined.
 func (f *FlagSet) ParseAll(arguments []string, fn func(flag *Flag, value string) error) error {
-	f.parsed = true
-	f.args = make([]string, 0, len(arguments))
-
-	err := f.parseArgs(arguments, fn)
-	if err != nil {
-		switch f.errorHandling {
-		case ContinueOnError:
-			return err
-		case ExitOnError:
-			os.Exit(2)
-		case PanicOnError:
-			panic(err)
-		}
-	}
-	return nil
+	return f.parseAll(arguments, fn)
 }
 
 // Parsed reports whether f.Parse has been called.
