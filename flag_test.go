@@ -408,7 +408,7 @@ func testParseWithUnknownFlags(f *FlagSet, t *testing.T) {
 	if f.Parsed() {
 		t.Error("f.Parse() = true before Parse")
 	}
-	f.ParseErrorsWhitelist.UnknownFlags = true
+	f.ParseErrorsAllowlist.UnknownFlags = true
 
 	f.BoolP("boola", "a", false, "bool value")
 	f.BoolP("boolb", "b", false, "bool2 value")
@@ -1033,7 +1033,7 @@ func TestHelp(t *testing.T) {
 		}
 	}
 	helpCalled = false
-	fs.ParseErrorsWhitelist.UnknownFlags = true
+	fs.ParseErrorsAllowlist.UnknownFlags = true
 	for _, f := range []string{"--help", "-h"} {
 		err := fs.Parse([]string{f})
 		t.Logf("help called: %v\n", helpCalled)

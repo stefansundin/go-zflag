@@ -29,8 +29,8 @@ const (
 	PanicOnError
 )
 
-// ParseErrorsWhitelist defines the parsing errors that can be ignored
-type ParseErrorsWhitelist struct {
+// ParseErrorsAllowlist defines the parsing errors that can be ignored
+type ParseErrorsAllowlist struct {
 	// UnknownFlags will ignore unknown flags errors and continue parsing rest of the flags
 	// See GetUnknownFlags to retrieve collected unknowns.
 	UnknownFlags bool
@@ -51,8 +51,8 @@ type FlagSet struct {
 	// help/usage messages.
 	SortFlags bool
 
-	// ParseErrorsWhitelist is used to configure a whitelist of errors
-	ParseErrorsWhitelist ParseErrorsWhitelist
+	// ParseErrorsAllowlist is used to configure an allowlist of errors
+	ParseErrorsAllowlist ParseErrorsAllowlist
 
 	// DisableBuiltinHelp toggles the built-in convention of handling -h and --help
 	DisableBuiltinHelp bool
@@ -990,7 +990,7 @@ func (f *FlagSet) parseLongArg(s string, args []string, fn parseFunc) (outArgs [
 			f.usage()
 			err = ErrHelp
 			return
-		case f.ParseErrorsWhitelist.UnknownFlags || (flag != nil && flag.ShorthandOnly):
+		case f.ParseErrorsAllowlist.UnknownFlags || (flag != nil && flag.ShorthandOnly):
 			// --unknown=unknownval arg ...
 			// we do not want to lose arg in this case
 			f.addUnknownFlag(s)
@@ -1041,7 +1041,7 @@ func (f *FlagSet) parseSingleShortArg(shorthands string, args []string, fn parse
 			f.usage()
 			err = ErrHelp
 			return
-		case f.ParseErrorsWhitelist.UnknownFlags:
+		case f.ParseErrorsAllowlist.UnknownFlags:
 			if len(shorthands) > 2 {
 				// '-f...'
 				// we do not want to lose anything in this case
