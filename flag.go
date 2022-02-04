@@ -596,7 +596,7 @@ func UnquoteUsage(flag *Flag) (name string, usage string) {
 				name = "int"
 			case "intSlice", "int8Slice", "int16Slice", "int32Slice", "int64Slice":
 				name = "ints"
-			case "stringSlice":
+			case "stringSlice", "stringArray":
 				name = "strings"
 			case "uint8", "uint16", "uint32", "uint64":
 				name = "uint"
