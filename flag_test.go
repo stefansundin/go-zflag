@@ -591,6 +591,7 @@ func TestShorthandLookup(t *testing.T) {
 	}
 	f.BoolP("boola", "a", false, "bool value")
 	f.BoolP("boolb", "b", false, "bool2 value")
+	f.BoolP("boolö", "ö", false, "bool2 value")
 	args := []string{
 		"-ab",
 	}
@@ -611,6 +612,10 @@ func TestShorthandLookup(t *testing.T) {
 	flag = f.ShorthandLookup("")
 	if flag != nil {
 		t.Errorf("f.ShorthandLookup(\"\") did not return nil")
+	}
+	flag = f.ShorthandLookup("ö")
+	if flag.Name != "boolö" {
+		t.Errorf("f.ShorthandLookup(\"ö\") found %q instead of \"boolö\"", flag.Name)
 	}
 	defer func() {
 		recover()
