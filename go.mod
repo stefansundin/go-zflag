@@ -1,3 +1,3 @@
-module github.com/cornfeedhobo/pflag
+module github.com/gowarden/pflag
 
 go 1.15

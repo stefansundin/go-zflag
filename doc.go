@@ -10,7 +10,7 @@ which can be found in the LICENSE file.
 If you import pflag under the name "flag" then all code
 should continue to function with no changes.
 
-	import flag "github.com/cornfeedhobo/pflag"
+	import flag "github.com/gowarden/pflag"
 
 There is one exception to this: if you directly instantiate the Flag struct
 there is one more field "Shorthand" that you will need to set.
