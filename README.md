@@ -327,6 +327,37 @@ Output:
 
 _Note: This unquoting behavior can be disabled with `Flag.DisableUnquoteUsage`_.
 
+### Customizing flag usages
+
+You can customize the flag usages by overriding the `FlagSet.FlagUsageFormatter` field
+with a struct that implements [`FlagUsageFormatter`](./formatter.go).
+You can re-implement the whole interface or embed the `DefaultFlagUsageFormatter`.
+
+For example:
+
+```go
+type myFlagFormatter struct {
+  pflag.DefaultFlagUsageFormatter
+}
+
+func (f myFlagFormatter) Name(flag *pflag.Flag) string {
+  return "--not-hello"
+}
+
+
+flagSet := pflag.NewFlagSet("myapp", pflag.ExitOnError)
+flagSet.String("hello", "", "myusage")
+
+flagSet.FlagUsageFormatter = myFlagFormatter{}
+flagSet.PrintDefaults()
+```
+
+Which will print:
+
+```
+--not-hello string   myusage
+```
+
 ### Disable printing a flag's default value
 
 The printing of a flag's default value can be suppressed with `Flag.DisablePrintDefault`.

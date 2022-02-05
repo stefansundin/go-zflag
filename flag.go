@@ -58,6 +58,10 @@ type FlagSet struct {
 	// DisableBuiltinHelp toggles the built-in convention of handling -h and --help
 	DisableBuiltinHelp bool
 
+	// FlagUsageFormatter allows for custom formatting of flag usage output.
+	// Each individual item needs to be implemented. See FlagUsagesForGroupWrapped for info on what gets passed.
+	FlagUsageFormatter FlagUsageFormatter
+
 	name              string
 	parsed            bool
 	actual            map[NormalizedName]*Flag
@@ -678,6 +682,14 @@ func wrap(i, w int, s string) string {
 
 }
 
+func (f *FlagSet) flagUsageFormatter() FlagUsageFormatter {
+	if f.FlagUsageFormatter == nil {
+		return DefaultFlagUsageFormatter{}
+	}
+
+	return f.FlagUsageFormatter
+}
+
 // FlagUsagesWrapped returns a string containing the usage information
 // for all flags in the FlagSet. Wrapped to `cols` columns (0 for no
 // wrapping)
@@ -693,45 +705,22 @@ func (f *FlagSet) FlagUsagesForGroupWrapped(group string, cols int) string {
 
 	lines := make(map[string][]string)
 
+	usageFormatter := f.flagUsageFormatter()
+
 	maxlen := 0
 	f.VisitAll(func(flag *Flag) {
 		if flag.Hidden {
 			return
 		}
 
-		line := ""
-		if flag.Shorthand != 0 && flag.ShorthandDeprecated == "" {
-			line = fmt.Sprintf("  -%c", flag.Shorthand)
-			if !flag.ShorthandOnly {
-				line = fmt.Sprintf("%s, --%s", line, flag.Name)
-			}
-		} else {
-			line = fmt.Sprintf("      --%s", flag.Name)
-		}
+		line := usageFormatter.Name(flag)
 
 		varname, usage := UnquoteUsage(flag)
 		if varname != "" {
-			line += " " + varname
+			line += " " + usageFormatter.UsageVarName(flag, varname)
 		}
 		if flag.NoOptDefVal != "" {
-			if v, ok := flag.Value.(Typed); ok {
-				switch v.Type() {
-				case "string":
-					line += fmt.Sprintf("[=\"%s\"]", flag.NoOptDefVal)
-				case "bool":
-					if flag.NoOptDefVal != "true" {
-						line += fmt.Sprintf("[=%s]", flag.NoOptDefVal)
-					}
-				case "count":
-					if flag.NoOptDefVal != "+1" {
-						line += fmt.Sprintf("[=%s]", flag.NoOptDefVal)
-					}
-				default:
-					line += fmt.Sprintf("[=%s]", flag.NoOptDefVal)
-				}
-			} else {
-				line += fmt.Sprintf("[=%s]", flag.NoOptDefVal)
-			}
+			line += usageFormatter.NoOptDefValue(flag)
 		}
 
 		// This special character will be replaced with spacing once the
@@ -741,16 +730,12 @@ func (f *FlagSet) FlagUsagesForGroupWrapped(group string, cols int) string {
 			maxlen = len(line)
 		}
 
-		line += usage
+		line += usageFormatter.Usage(flag, usage)
 		if !flag.DisablePrintDefault && !flag.defaultIsZeroValue() {
-			if v, ok := flag.Value.(Typed); ok && v.Type() == "string" {
-				line += fmt.Sprintf(" (default %q)", flag.DefValue)
-			} else {
-				line += fmt.Sprintf(" (default %s)", flag.DefValue)
-			}
+			line += usageFormatter.DefaultValue(flag)
 		}
 		if len(flag.Deprecated) != 0 {
-			line += fmt.Sprintf(" (DEPRECATED: %s)", flag.Deprecated)
+			line += usageFormatter.Deprecated(flag)
 		}
 
 		group := flag.Group
