@@ -95,7 +95,7 @@ type Flag struct {
 	Hidden              bool                // used by cobra.Command to allow flags to be hidden from help/usage text
 	ShorthandDeprecated string              // If the shorthand of this flag is deprecated, this string is the new or now thing to use
 	Group               string              // flag group
-	Annotations         map[string][]string // used by cobra.Command bash autocomple code
+	Annotations         map[string][]string // Use it to annotate this specific flag for your application; used by cobra.Command bash completion code
 }
 
 // Value is the interface to the dynamic value stored in a flag.
@@ -320,7 +320,7 @@ func (f *FlagSet) Lookup(name string) *Flag {
 func (f *FlagSet) ShorthandLookup(name string) *Flag {
 	if utf8.RuneCountInString(name) > 1 {
 		msg := fmt.Sprintf("can not look up shorthand which is more than one UTF-8 character: %q", name)
-		fmt.Fprintf(f.Output(), msg)
+		fmt.Fprintln(f.Output(), msg)
 		panic(msg)
 	}
 	r, _ := utf8.DecodeRuneInString(name)
@@ -953,7 +953,7 @@ func (f *FlagSet) AddFlag(flag *Flag) {
 	used, alreadyThere := f.shorthands[flag.Shorthand]
 	if alreadyThere {
 		msg := fmt.Sprintf("unable to redefine %q shorthand in %q flagset: it's already used for %q flag", flag.Shorthand, f.name, used.Name)
-		fmt.Fprintf(f.Output(), msg)
+		fmt.Fprintln(f.Output(), msg)
 		panic(msg)
 	}
 	f.shorthands[flag.Shorthand] = flag
@@ -1213,7 +1213,7 @@ func (f *FlagSet) parseAll(arguments []string, fn parseFunc) error {
 	}
 	f.parsed = true
 
-	if len(arguments) < 0 {
+	if len(arguments) == 0 {
 		return nil
 	}
 
