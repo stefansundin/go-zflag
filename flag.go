@@ -373,7 +373,7 @@ func (f *FlagSet) ArgsLenAtDash() int {
 func (f *FlagSet) MarkDeprecated(name string, usageMessage string) error {
 	flag := f.Lookup(name)
 	if flag == nil {
-		return fmt.Errorf("flag %q does not exist", name)
+		return NewUnknownFlagError(name)
 	}
 	if usageMessage == "" {
 		return fmt.Errorf("deprecated message for flag %q must be set", name)
@@ -389,7 +389,7 @@ func (f *FlagSet) MarkDeprecated(name string, usageMessage string) error {
 func (f *FlagSet) MarkShorthandDeprecated(name string, usageMessage string) error {
 	flag := f.Lookup(name)
 	if flag == nil {
-		return fmt.Errorf("flag %q does not exist", name)
+		return NewUnknownFlagError(name)
 	}
 	if usageMessage == "" {
 		return fmt.Errorf("deprecated message for flag %q must be set", name)
@@ -403,7 +403,7 @@ func (f *FlagSet) MarkShorthandDeprecated(name string, usageMessage string) erro
 func (f *FlagSet) MarkHidden(name string) error {
 	flag := f.Lookup(name)
 	if flag == nil {
-		return fmt.Errorf("flag %q does not exist", name)
+		return NewUnknownFlagError(name)
 	}
 	flag.Hidden = true
 	return nil
@@ -413,7 +413,7 @@ func (f *FlagSet) MarkHidden(name string) error {
 func (f *FlagSet) SetGroup(name, group string) error {
 	flag := f.Lookup(name)
 	if flag == nil {
-		return fmt.Errorf("flag %q does not exist", name)
+		return NewUnknownFlagError(name)
 	}
 	flag.Group = group
 	return nil
@@ -436,11 +436,7 @@ func (f *FlagSet) Set(name, value string) error {
 	normalName := f.normalizeFlagName(name)
 	flag, ok := f.formal[normalName]
 	if !ok {
-		dash := "--"
-		if len(name) == 1 {
-			dash = "-"
-		}
-		return fmt.Errorf("unknown flag: %v%v", dash, name)
+		return NewUnknownFlagError(name)
 	}
 
 	err := flag.Value.Set(value)
@@ -480,11 +476,7 @@ func (f *FlagSet) SetAnnotation(name, key string, values []string) error {
 	normalName := f.normalizeFlagName(name)
 	flag, ok := f.formal[normalName]
 	if !ok {
-		dash := "--"
-		if len(name) == 1 {
-			dash = "-"
-		}
-		return fmt.Errorf("unknown flag: %v%v", dash, name)
+		return NewUnknownFlagError(name)
 	}
 	if flag.Annotations == nil {
 		flag.Annotations = map[string][]string{}
@@ -1049,7 +1041,7 @@ func (f *FlagSet) parseLongArg(s string, args []string, fn parseFunc) (outArgs [
 			outArgs = f.stripUnknownFlagValue(outArgs)
 			return
 		default:
-			err = f.failf("unknown flag: --%s", name)
+			err = f.failf(NewUnknownFlagError(name).Error())
 			return
 		}
 	}
