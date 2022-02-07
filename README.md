@@ -5,7 +5,7 @@
 [![GoDoc](https://godoc.org/github.com/gowarden/pflag?status.svg)](https://godoc.org/github.com/gowarden/pflag)
 [![Go Report Card](https://goreportcard.com/badge/github.com/gowarden/pflag)](https://goreportcard.com/report/github.com/gowarden/pflag)
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/gowarden/pflag?sort=semver)](https://github.com/gowarden/pflag/releases)
-[![Build Status](https://travis-ci.com/gowarden/pflag.svg?branch=master)](https://travis-ci.com/gowarden/pflag)
+[![Build Status](https://github.com/gowarden/pflag/actions/workflows/validate.yml/badge.svg)](https://github.com/gowarden/pflag/actions/workflows/validate.yml)
 
 * [Installation](#installation)
   * [Installing this fork with spf13/cobra](#installing-this-fork-with-cobra)
