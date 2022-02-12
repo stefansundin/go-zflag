@@ -2,10 +2,10 @@
 
 ***This is a fork of [cornfeedhobo/pflag](https://github.com/cornfeedhobo/pflag), which in turn is a fork of [spf13/pflag](https://github.com/spf13/pflag) due to poor maintenance***
 
-[![GoDoc](https://godoc.org/github.com/gowarden/pflag?status.svg)](https://godoc.org/github.com/gowarden/pflag)
-[![Go Report Card](https://goreportcard.com/badge/github.com/gowarden/pflag)](https://goreportcard.com/report/github.com/gowarden/pflag)
-[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/gowarden/pflag?sort=semver)](https://github.com/gowarden/pflag/releases)
-[![Build Status](https://github.com/gowarden/pflag/actions/workflows/validate.yml/badge.svg)](https://github.com/gowarden/pflag/actions/workflows/validate.yml)
+[![GoDoc](https://godoc.org/github.com/gowarden/zflag?status.svg)](https://godoc.org/github.com/gowarden/zflag)
+[![Go Report Card](https://goreportcard.com/badge/github.com/gowarden/zflag)](https://goreportcard.com/report/github.com/gowarden/zflag)
+[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/gowarden/zflag?sort=semver)](https://github.com/gowarden/zflag/releases)
+[![Build Status](https://github.com/gowarden/zflag/actions/workflows/validate.yml/badge.svg)](https://github.com/gowarden/zflag/actions/workflows/validate.yml)
 
 * [Installation](#installation)
   * [Installing this fork with spf13/cobra](#installing-this-fork-with-cobra)
@@ -31,7 +31,7 @@ pflag is available using the standard `go get` command.
 Install by running:
 
 ``` bash
-go get github.com/gowarden/pflag
+go get github.com/gowarden/zflag
 ```
 
 ### Installing this fork with spf13/cobra
@@ -46,12 +46,12 @@ go mod tidy
 go mod vendor
 ```
 
-Override the upstream module using the [newest release](https://github.com/gowarden/pflag/releases).
+Override the upstream module using the [newest release](https://github.com/gowarden/zflag/releases).
 
 ``` bash
 pflag_upstream="github.com/spf13/pflag"
-pflag_fork="github.com/gowarden/pflag"
-pflag_fork_release="$(curl -s https://api.github.com/repos/gowarden/pflag/tags \
+pflag_fork="github.com/gowarden/zflag"
+pflag_fork_release="$(curl -s https://api.github.com/repos/gowarden/zflag/tags \
   | grep -o '"name": ".*"' \
   | head -1 \
   | cut -d':' -f2 \
@@ -110,10 +110,10 @@ before this terminator.
 ## Documentation
 
 You can see the full reference documentation of the pflag package
-[at godoc.org](http://godoc.org/github.com/gowarden/pflag), querying with
+[at godoc.org](http://godoc.org/github.com/gowarden/zflag), querying with
 [`go doc`](https://golang.org/cmd/doc/), or through go's standard documentation
 system by running `godoc -http=:6060` and browsing to
-[http://localhost:6060/pkg/github.com/gowarden/pflag](http://localhost:6060/pkg/github.com/gowarden/pflag)
+[http://localhost:6060/pkg/github.com/gowarden/zflag](http://localhost:6060/pkg/github.com/gowarden/zflag)
 after installation.
 
 ### Set a custom default for flags passed without values
@@ -251,7 +251,7 @@ third-party dependencies (e.g. `golang/glog`).
 ``` go
 import (
 	goflag "flag"
-	flag "github.com/gowarden/pflag"
+	flag "github.com/gowarden/zflag"
 )
 
 var ip *int = flag.Int("flagname", 1234, "help message for flagname")
