@@ -1,7 +1,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package pflag
+package zflag
 
 import (
 	"bytes"
@@ -17,7 +17,7 @@ const expectedOutput = `      --long-form    Some description
                        multiline
 `
 
-func setUpPFlagSet(buf io.Writer) *FlagSet {
+func setUpZFlagSet(buf io.Writer) *FlagSet {
 	f := NewFlagSet("test", ExitOnError)
 	f.Bool("long-form", false, "Some description")
 	f.Bool("long-form2", false, "Some description\n  with multiline")
@@ -29,7 +29,7 @@ func setUpPFlagSet(buf io.Writer) *FlagSet {
 
 func TestPrintUsage(t *testing.T) {
 	buf := bytes.Buffer{}
-	f := setUpPFlagSet(&buf)
+	f := setUpZFlagSet(&buf)
 	f.PrintDefaults()
 	res := buf.String()
 	if res != expectedOutput {
@@ -37,7 +37,7 @@ func TestPrintUsage(t *testing.T) {
 	}
 }
 
-func setUpPFlagSet2(buf io.Writer) *FlagSet {
+func setUpZFlagSet2(buf io.Writer) *FlagSet {
 	f := NewFlagSet("test", ExitOnError)
 	f.Bool("long-form", false, "Some description")
 	f.Bool("long-form2", false, "Some description\n  with multiline")
@@ -69,7 +69,7 @@ const expectedOutput2 = `      --long-form                    Some description
 
 func TestPrintUsage_2(t *testing.T) {
 	buf := bytes.Buffer{}
-	f := setUpPFlagSet2(&buf)
+	f := setUpZFlagSet2(&buf)
 	res := f.FlagUsagesWrapped(80)
 	if res != expectedOutput2 {
 		t.Errorf("Expected \n%q \nActual \n%q", expectedOutput2, res)

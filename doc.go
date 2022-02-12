@@ -1,13 +1,13 @@
 /*
-Package pflag is a drop-in replacement of Go's native flag package, implementing
-POSIX/GNU-style --flags. pflag is compatible with the GNU extensions to the POSIX
+Package zflag is a drop-in replacement of Go's native flag package, implementing
+POSIX/GNU-style --flags. zflag is compatible with the GNU extensions to the POSIX
 recommendations for command-line options. See
 http://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html
 
-pflag is available under the same style of BSD license as the Go language,
+zflag is available under the same style of BSD license as the Go language,
 which can be found in the LICENSE file.
 
-If you import pflag under the name "flag" then all code
+If you import zflag under the name "flag" then all code
 should continue to function with no changes.
 
 	import flag "github.com/gowarden/zflag"
@@ -45,7 +45,7 @@ After parsing, the arguments after the flag are available as the
 slice flag.Args() or individually as flag.Arg(i).
 The arguments are indexed from 0 through flag.NArg()-1.
 
-The pflag package also defines some new functions that are not in flag,
+The zflag package also defines some new functions that are not in flag,
 that give one-letter shorthands for flags. You can use these by appending
 'P' to the name of any function that defines a flag.
 	var ip = flag.IntP("flagname", "f", 1234, "help message")
@@ -90,4 +90,4 @@ in a command-line interface. The methods of FlagSet are
 analogous to the top-level functions for the command-line
 flag set.
 */
-package pflag
+package zflag

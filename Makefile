@@ -26,9 +26,9 @@ unittest:
 cobratest:
 	@echo '********** COBRA TEST **********'
 	@set -e \
-		&& test -d cobra || { git clone https://github.com/spf13/cobra.git && ln -s ../../pflag cobra/pflag ; } \
+		&& test -d cobra || { git clone https://github.com/spf13/cobra.git && ln -s ../../zflag cobra/zflag ; } \
 		&& cd cobra \
-		&& go mod edit -replace github.com/spf13/pflag=./pflag \
+		&& go mod edit -replace github.com/spf13/zflag=./zflag \
 		&& $(gotest) -v ./...
 
 test: unittest cobratest lint

@@ -1,7 +1,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package pflag
+package zflag
 
 import (
 	"bytes"
@@ -925,7 +925,7 @@ func TestOutput(t *testing.T) {
 }
 
 func TestOutputExitOnError(t *testing.T) {
-	if os.Getenv("PFLAG_CRASH_TEST") == "1" {
+	if os.Getenv("ZFLAG_CRASH_TEST") == "1" {
 		CommandLine = NewFlagSet(t.Name(), ExitOnError)
 		os.Args = []string{t.Name(), "--unknown"}
 		Parse()
@@ -935,7 +935,7 @@ func TestOutputExitOnError(t *testing.T) {
 	mockStdout := bytes.NewBufferString("")
 	mockStderr := bytes.NewBufferString("")
 	cmd := exec.Command(os.Args[0], "-test.run="+t.Name())
-	cmd.Env = append(os.Environ(), "PFLAG_CRASH_TEST=1")
+	cmd.Env = append(os.Environ(), "ZFLAG_CRASH_TEST=1")
 	cmd.Stdout = mockStdout
 	cmd.Stderr = mockStderr
 	err := cmd.Run()
@@ -1415,7 +1415,7 @@ func TestPrintDefaults(t *testing.T) {
 func TestVisitAllFlagOrder(t *testing.T) {
 	fs := NewFlagSet("TestVisitAllFlagOrder", ContinueOnError)
 	fs.SortFlags = false
-	// https://github.com/spf13/pflag/issues/120
+	// https://github.com/spf13/zflag/issues/120
 	fs.SetNormalizeFunc(func(f *FlagSet, name string) NormalizedName {
 		return NormalizedName(name)
 	})

@@ -1,4 +1,4 @@
-# pflag
+# zflag
 
 ***This is a fork of [cornfeedhobo/pflag](https://github.com/cornfeedhobo/pflag), which in turn is a fork of [spf13/pflag](https://github.com/spf13/pflag) due to poor maintenance***
 
@@ -16,7 +16,7 @@
   * [Deprecating a flag or its shorthand](#deprecating-a-flag-or-its-shorthand)
   * [Hidden flags](#hidden-flags)
   * [Disable sorting of flags](#disable-sorting-of-flags)
-  * [Supporting Go flags when using pflag](#supporting-go-flags-when-using-pflag)
+  * [Supporting Go flags when using zflag](#supporting-go-flags-when-using-zflag)
   * [Shorthand flags](#shorthand-flags)
   * [Shorthand-only flags](#shorthand-only-flags)
   * [Unknown flags](#unknown-flags)
@@ -26,37 +26,12 @@
 
 ## Installation
 
-pflag is available using the standard `go get` command.
+zflag is available using the standard `go get` command.
 
 Install by running:
 
 ``` bash
 go get github.com/gowarden/zflag
-```
-
-### Installing this fork with spf13/cobra
-
-Initialize your new app as normal
-
-``` bash
-cobra init myAwesomeCli --pkg-name github.com/username/repo
-cd myAwesomeCli
-go mod init github.com/username/repo
-go mod tidy
-go mod vendor
-```
-
-Override the upstream module using the [newest release](https://github.com/gowarden/zflag/releases).
-
-``` bash
-pflag_upstream="github.com/spf13/pflag"
-pflag_fork="github.com/gowarden/zflag"
-pflag_fork_release="$(curl -s https://api.github.com/repos/gowarden/zflag/tags \
-  | grep -o '"name": ".*"' \
-  | head -1 \
-  | cut -d':' -f2 \
-  | tr -d '" ')"
-go mod edit -replace $pflag_upstream=$pflag_fork@$pflag_fork_release
 ```
 
 ## Supported Syntax
@@ -109,7 +84,7 @@ before this terminator.
 
 ## Documentation
 
-You can see the full reference documentation of the pflag package
+You can see the full reference documentation of the zflag package
 [at godoc.org](http://godoc.org/github.com/gowarden/zflag), querying with
 [`go doc`](https://golang.org/cmd/doc/), or through go's standard documentation
 system by running `godoc -http=:6060` and browsing to
@@ -146,13 +121,13 @@ comparison. Two examples of using the custom normalization func follow.
 **Example #1**: You want -, _, and . in flags to compare the same. aka --my-flag == --my_flag == --my.flag
 
 ``` go
-func wordSepNormalizeFunc(f *pflag.FlagSet, name string) pflag.NormalizedName {
+func wordSepNormalizeFunc(f *zflag.FlagSet, name string) zflag.NormalizedName {
 	from := []string{"-", "_"}
 	to := "."
 	for _, sep := range from {
 		name = strings.Replace(name, sep, to, -1)
 	}
-	return pflag.NormalizedName(name)
+	return zflag.NormalizedName(name)
 }
 
 myFlagSet.SetNormalizeFunc(wordSepNormalizeFunc)
@@ -161,13 +136,13 @@ myFlagSet.SetNormalizeFunc(wordSepNormalizeFunc)
 **Example #2**: You want to alias two flags. aka --old-flag-name == --new-flag-name
 
 ``` go
-func aliasNormalizeFunc(f *pflag.FlagSet, name string) pflag.NormalizedName {
+func aliasNormalizeFunc(f *zflag.FlagSet, name string) zflag.NormalizedName {
 	switch name {
 	case "old-flag-name":
 		name = "new-flag-name"
 		break
 	}
-	return pflag.NormalizedName(name)
+	return zflag.NormalizedName(name)
 }
 
 myFlagSet.SetNormalizeFunc(aliasNormalizeFunc)
@@ -240,10 +215,10 @@ flag.PrintDefaults()
       --usefulflag int    sometimes it's very useful (default 777)
 ```
 
-### Supporting Go flags when using pflag
+### Supporting Go flags when using zflag
 
 In order to support flags defined using Go's `flag` package, they must be added
-to the `pflag` flagset. This is usually necessary to support flags defined by
+to the `zflag` flagset. This is usually necessary to support flags defined by
 third-party dependencies (e.g. `golang/glog`).
 
 **Example**: You want to add the Go flags to the `CommandLine` flagset
@@ -285,7 +260,7 @@ the short form is passed.
 
 ### Unknown flags
 
-Normally pflag will error when an unknown flag is passed, but it's also possible
+Normally zflag will error when an unknown flag is passed, but it's also possible
 to disable that using `FlagSet.ParseErrorsWhitelist.UnknownFlags`:
 
 ``` go
@@ -337,15 +312,15 @@ For example:
 
 ```go
 type myFlagFormatter struct {
-  pflag.DefaultFlagUsageFormatter
+  zflag.DefaultFlagUsageFormatter
 }
 
-func (f myFlagFormatter) Name(flag *pflag.Flag) string {
+func (f myFlagFormatter) Name(flag *zflag.Flag) string {
   return "--not-hello"
 }
 
 
-flagSet := pflag.NewFlagSet("myapp", pflag.ExitOnError)
+flagSet := zflag.NewFlagSet("myapp", zflag.ExitOnError)
 flagSet.String("hello", "", "myusage")
 
 flagSet.FlagUsageFormatter = myFlagFormatter{}
@@ -377,7 +352,7 @@ flag.Lookup("in").DisablePrintDefault = true
 
 ### Disable built-in help flags
 
-Normally pflag will handle `--help` and `-h` when the flags aren't explicitly defined.
+Normally zflag will handle `--help` and `-h` when the flags aren't explicitly defined.
 
 If for some reason there is a need to capture the error returned in this condition, it
 is possible to disable this built-in handling.
