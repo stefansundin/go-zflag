@@ -6,6 +6,7 @@ package zflag
 import (
 	"fmt"
 	"net"
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -27,6 +28,14 @@ func setUpIPSFlagSetWithDefault(ipsp *[]net.IP) *FlagSet {
 	return f
 }
 
+func TestIPSValueImplementsGetter(t *testing.T) {
+	var v Value = new(ipSliceValue)
+
+	if _, ok := v.(Getter); !ok {
+		t.Fatalf("%T should implement the Getter interface", v)
+	}
+}
+
 func TestEmptyIP(t *testing.T) {
 	var ips []net.IP
 	f := setUpIPSFlagSet(&ips)
@@ -41,6 +50,37 @@ func TestEmptyIP(t *testing.T) {
 	}
 	if len(getIPS) != 0 {
 		t.Fatalf("got ips %v with len=%d but expected length=0", getIPS, len(getIPS))
+	}
+	getIPS_2, err := f.Get("ips")
+	if err != nil {
+		t.Fatal("got an error from Get():", err)
+	}
+	if !reflect.DeepEqual(getIPS_2, getIPS) {
+		t.Fatalf("expected %v with type %T but got %v with type %T ", getIPS, getIPS, getIPS_2, getIPS_2)
+	}
+}
+
+func TestEmptyIPValue(t *testing.T) {
+	var ips []net.IP
+	f := setUpIPSFlagSet(&ips)
+	err := f.Parse([]string{"--ips="})
+	if err != nil {
+		t.Fatal("expected no error; got", err)
+	}
+
+	getIPS, err := f.GetIPSlice("ips")
+	if err != nil {
+		t.Fatal("got an error from GetIPSlice():", err)
+	}
+	if len(getIPS) != 0 {
+		t.Fatalf("got ips %v with len=%d but expected length=0", getIPS, len(getIPS))
+	}
+	getIPS_2, err := f.Get("ips")
+	if err != nil {
+		t.Fatal("got an error from Get():", err)
+	}
+	if !reflect.DeepEqual(getIPS_2, getIPS) {
+		t.Fatalf("expected %v with type %T but got %v with type %T ", getIPS, getIPS, getIPS_2, getIPS_2)
 	}
 }
 
@@ -60,6 +100,24 @@ func TestIPS(t *testing.T) {
 		} else if !ip.Equal(v) {
 			t.Fatalf("expected ips[%d] to be %s but got: %s from GetIPSlice", i, vals[i], v)
 		}
+	}
+	getIPS, err := f.GetIPSlice("ips")
+	if err != nil {
+		t.Fatalf("got error: %v", err)
+	}
+	for i, v := range getIPS {
+		if ip := net.ParseIP(vals[i]); ip == nil {
+			t.Fatalf("invalid string being converted to IP address: %s", vals[i])
+		} else if !ip.Equal(v) {
+			t.Fatalf("expected ips[%d] to be %s but got: %s from GetIPSlice", i, vals[i], v)
+		}
+	}
+	getIPS_2, err := f.Get("ips")
+	if err != nil {
+		t.Fatal("got an error from Get():", err)
+	}
+	if !reflect.DeepEqual(getIPS_2, getIPS) {
+		t.Fatalf("expected %v with type %T but got %v with type %T ", getIPS, getIPS, getIPS_2, getIPS_2)
 	}
 }
 
@@ -91,6 +149,13 @@ func TestIPSDefault(t *testing.T) {
 			t.Fatalf("expected ips[%d] to be %s but got: %s", i, vals[i], v)
 		}
 	}
+	getIPS_2, err := f.Get("ips")
+	if err != nil {
+		t.Fatal("got an error from Get():", err)
+	}
+	if !reflect.DeepEqual(getIPS_2, getIPS) {
+		t.Fatalf("expected %v with type %T but got %v with type %T ", getIPS, getIPS, getIPS_2, getIPS_2)
+	}
 }
 
 func TestIPSWithDefault(t *testing.T) {
@@ -121,6 +186,13 @@ func TestIPSWithDefault(t *testing.T) {
 		} else if !ip.Equal(v) {
 			t.Fatalf("expected ips[%d] to be %s but got: %s", i, vals[i], v)
 		}
+	}
+	getIPS_2, err := f.Get("ips")
+	if err != nil {
+		t.Fatal("got an error from Get():", err)
+	}
+	if !reflect.DeepEqual(getIPS_2, getIPS) {
+		t.Fatalf("expected %v with type %T but got %v with type %T ", getIPS, getIPS, getIPS_2, getIPS_2)
 	}
 }
 

@@ -23,6 +23,10 @@ func newIPNetSliceValue(val []net.IPNet, p *[]net.IPNet) *ipNetSliceValue {
 	return ipnsv
 }
 
+func (s *ipNetSliceValue) Get() interface{} {
+	return *s.value
+}
+
 // Set converts, and assigns, the comma-separated IPNet argument string representation as the []net.IPNet value of this flag.
 // If Set is called on a flag that already has a []net.IPNet assigned, the newly converted values will be appended.
 func (s *ipNetSliceValue) Set(val string) error {
@@ -74,27 +78,9 @@ func (s *ipNetSliceValue) String() string {
 	return "[" + out + "]"
 }
 
-func ipNetSliceConv(val string) (interface{}, error) {
-	val = strings.Trim(val, "[]")
-	// Empty string would cause a slice with one (empty) entry
-	if len(val) == 0 {
-		return []net.IPNet{}, nil
-	}
-	ss := strings.Split(val, ",")
-	out := make([]net.IPNet, len(ss))
-	for i, sval := range ss {
-		_, n, err := net.ParseCIDR(strings.TrimSpace(sval))
-		if err != nil {
-			return nil, fmt.Errorf("invalid string being converted to CIDR: %s", sval)
-		}
-		out[i] = *n
-	}
-	return out, nil
-}
-
 // GetIPNetSlice returns the []net.IPNet value of a flag with the given name
 func (f *FlagSet) GetIPNetSlice(name string) ([]net.IPNet, error) {
-	val, err := f.getFlagType(name, "ipNetSlice", ipNetSliceConv)
+	val, err := f.getFlagType(name, "ipNetSlice")
 	if err != nil {
 		return []net.IPNet{}, err
 	}

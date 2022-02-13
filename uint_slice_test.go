@@ -5,6 +5,7 @@ package zflag
 
 import (
 	"fmt"
+	"reflect"
 	"strconv"
 	"strings"
 	"testing"
@@ -22,6 +23,14 @@ func setUpUISFlagSetWithDefault(uisp *[]uint) *FlagSet {
 	return f
 }
 
+func TestUISValueImplementsGetter(t *testing.T) {
+	var v Value = new(uintSliceValue)
+
+	if _, ok := v.(Getter); !ok {
+		t.Fatalf("%T should implement the Getter interface", v)
+	}
+}
+
 func TestEmptyUIS(t *testing.T) {
 	var uis []uint
 	f := setUpUISFlagSet(&uis)
@@ -36,6 +45,13 @@ func TestEmptyUIS(t *testing.T) {
 	}
 	if len(getUIS) != 0 {
 		t.Fatalf("got is %v with len=%d but expected length=0", getUIS, len(getUIS))
+	}
+	getUIS_2, err := f.Get("uis")
+	if err != nil {
+		t.Fatal("got an error from Get():", err)
+	}
+	if !reflect.DeepEqual(getUIS_2, getUIS) {
+		t.Fatalf("expected %v with type %T but got %v with type %T ", getUIS, getUIS, getUIS_2, getUIS_2)
 	}
 }
 
@@ -70,6 +86,13 @@ func TestUIS(t *testing.T) {
 		if uint(u) != v {
 			t.Fatalf("expected uis[%d] to be %s but got: %d from GetUintSlice", i, vals[i], v)
 		}
+	}
+	getUIS_2, err := f.Get("uis")
+	if err != nil {
+		t.Fatal("got an error from Get():", err)
+	}
+	if !reflect.DeepEqual(getUIS_2, getUIS) {
+		t.Fatalf("expected %v with type %T but got %v with type %T ", getUIS, getUIS, getUIS_2, getUIS_2)
 	}
 }
 
@@ -106,6 +129,13 @@ func TestUISDefault(t *testing.T) {
 			t.Fatalf("expected uis[%d] to be %d from GetUintSlice but got: %d", i, u, v)
 		}
 	}
+	getUIS_2, err := f.Get("uis")
+	if err != nil {
+		t.Fatal("got an error from Get():", err)
+	}
+	if !reflect.DeepEqual(getUIS_2, getUIS) {
+		t.Fatalf("expected %v with type %T but got %v with type %T ", getUIS, getUIS, getUIS_2, getUIS_2)
+	}
 }
 
 func TestUISWithDefault(t *testing.T) {
@@ -140,6 +170,13 @@ func TestUISWithDefault(t *testing.T) {
 		if uint(u) != v {
 			t.Fatalf("expected uis[%d] to be %d from GetUintSlice but got: %d", i, u, v)
 		}
+	}
+	getUIS_2, err := f.Get("uis")
+	if err != nil {
+		t.Fatal("got an error from Get():", err)
+	}
+	if !reflect.DeepEqual(getUIS_2, getUIS) {
+		t.Fatalf("expected %v with type %T but got %v with type %T ", getUIS, getUIS, getUIS_2, getUIS_2)
 	}
 }
 

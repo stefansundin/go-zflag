@@ -5,6 +5,7 @@ package zflag
 
 import (
 	"fmt"
+	"reflect"
 	"strconv"
 	"strings"
 	"testing"
@@ -22,6 +23,13 @@ func setUpF32SFlagSetWithDefault(f32sp *[]float32) *FlagSet {
 	return f
 }
 
+func TestF32SValueImplementsGetter(t *testing.T) {
+	var v Value = new(float32SliceValue)
+
+	if _, ok := v.(Getter); !ok {
+		t.Fatalf("%T should implement the Getter interface", v)
+	}
+}
 func TestEmptyF32S(t *testing.T) {
 	var f32s []float32
 	f := setUpF32SFlagSet(&f32s)
@@ -36,6 +44,14 @@ func TestEmptyF32S(t *testing.T) {
 	}
 	if len(getF32S) != 0 {
 		t.Fatalf("got f32s %v with len=%d but expected length=0", getF32S, len(getF32S))
+	}
+	getF32S_2, err := f.Get("f32s")
+	if err != nil {
+		t.Fatal("got an error from Get():", err)
+	}
+
+	if !reflect.DeepEqual(getF32S_2, getF32S) {
+		t.Fatalf("expected %v with type %T but got %v with type %T ", getF32S, getF32S, getF32S_2, getF32S_2)
 	}
 }
 
@@ -74,6 +90,14 @@ func TestF32S(t *testing.T) {
 		if d != v {
 			t.Fatalf("expected f32s[%d] to be %s but got: %f from GetFloat32Slice", i, vals[i], v)
 		}
+	}
+	getF32S_2, err := f.Get("f32s")
+	if err != nil {
+		t.Fatal("got an error from Get():", err)
+	}
+
+	if !reflect.DeepEqual(getF32S_2, getF32S) {
+		t.Fatalf("expected %v with type %T but got %v with type %T ", getF32S, getF32S, getF32S_2, getF32S_2)
 	}
 }
 

@@ -7,6 +7,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"os"
+	"reflect"
 	"testing"
 )
 
@@ -15,6 +16,20 @@ func setUpBytesHex(bytesHex *[]byte) *FlagSet {
 	f.BytesHexVar(bytesHex, "bytes", []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 0}, "Some bytes in HEX")
 	f.BytesHexVarP(bytesHex, "bytes2", "B", []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 0}, "Some bytes in HEX")
 	return f
+}
+
+func TestBytesValueImplementsGetter(t *testing.T) {
+	var v Value = new(bytesBase64Value)
+
+	if _, ok := v.(Getter); !ok {
+		t.Fatalf("%T should implement the Getter interface", v)
+	}
+
+	var v2 Value = new(bytesHexValue)
+
+	if _, ok := v2.(Getter); !ok {
+		t.Fatalf("%T should implement the Getter interface", v2)
+	}
 }
 
 func TestBytesHex(t *testing.T) {
@@ -69,6 +84,13 @@ func TestBytesHex(t *testing.T) {
 				}
 				if fmt.Sprintf("%X", bytesHex) != tc.expected {
 					t.Errorf("expected %q, got '%X'", tc.expected, bytesHex)
+				}
+				bytesHex2, err := f.Get("bytes")
+				if err != nil {
+					t.Fatal("got an error from Get():", err)
+				}
+				if !reflect.DeepEqual(bytesHex, bytesHex2) {
+					t.Fatalf("expected %v with type %T but got %v with type %T", bytesHex, bytesHex, bytesHex2, bytesHex2)
 				}
 			}
 		}
@@ -130,6 +152,13 @@ func TestBytesBase64(t *testing.T) {
 				}
 				if base64.StdEncoding.EncodeToString(bytesBase64) != tc.expected {
 					t.Errorf("expected %q, got '%X'", tc.expected, bytesBase64)
+				}
+				bytesBase64_2, err := f.Get("bytes")
+				if err != nil {
+					t.Fatal("got an error from Get():", err)
+				}
+				if !reflect.DeepEqual(bytesBase64, bytesBase64_2) {
+					t.Fatalf("expected %v with type %T but got %v with type %T", bytesBase64, bytesBase64, bytesBase64_2, bytesBase64_2)
 				}
 			}
 		}

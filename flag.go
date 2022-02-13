@@ -109,6 +109,13 @@ type Value interface {
 	Set(string) error
 }
 
+type Getter interface {
+	String() string
+	Set(string) error
+	Type() string
+	Get() interface{}
+}
+
 // Typed is an interface of Values that can communicate their type.
 type Typed interface {
 	Type() string
@@ -313,6 +320,16 @@ func GetUnknownFlags() []string {
 	return CommandLine.GetUnknownFlags()
 }
 
+// Get returns the value of the named flag.
+func (f *FlagSet) Get(name string) (interface{}, error) {
+	return f.getFlagType(name, "")
+}
+
+// Get returns the value of the named flag.
+func Get(name string) (interface{}, error) {
+	return CommandLine.Get(name)
+}
+
 // Lookup returns the Flag structure of the named flag, returning nil if none exists.
 func (f *FlagSet) Lookup(name string) *Flag {
 	return f.lookup(f.normalizeFlagName(name))
@@ -340,7 +357,7 @@ func (f *FlagSet) lookup(name NormalizedName) *Flag {
 }
 
 // func to return a given type for a given flag name
-func (f *FlagSet) getFlagType(name string, ftype string, convFunc func(sval string) (interface{}, error)) (interface{}, error) {
+func (f *FlagSet) getFlagType(name string, ftype string) (interface{}, error) {
 	flag := f.Lookup(name)
 	if flag == nil {
 		err := fmt.Errorf("flag accessed but not defined: %s", name)
@@ -352,12 +369,13 @@ func (f *FlagSet) getFlagType(name string, ftype string, convFunc func(sval stri
 		return nil, err
 	}
 
-	sval := flag.Value.String()
-	result, err := convFunc(sval)
-	if err != nil {
-		return nil, err
+	var getter Getter
+	var ok bool
+	if getter, ok = flag.Value.(Getter); !ok {
+		return nil, fmt.Errorf("flag %s does not implement the Getter interface", name)
 	}
-	return result, nil
+
+	return getter.Get(), nil
 }
 
 // ArgsLenAtDash will return the length of f.Args at the moment when a -- was

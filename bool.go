@@ -20,6 +20,10 @@ func newBoolValue(val bool, p *bool) *boolValue {
 	return (*boolValue)(p)
 }
 
+func (b *boolValue) Get() interface{} {
+	return bool(*b)
+}
+
 func (b *boolValue) Set(s string) error {
 	v, err := strconv.ParseBool(s)
 	*b = boolValue(v)
@@ -34,13 +38,9 @@ func (b *boolValue) String() string { return strconv.FormatBool(bool(*b)) }
 
 func (b *boolValue) IsBoolFlag() bool { return true }
 
-func boolConv(sval string) (interface{}, error) {
-	return strconv.ParseBool(sval)
-}
-
 // GetBool return the bool value of a flag with the given name
 func (f *FlagSet) GetBool(name string) (bool, error) {
-	val, err := f.getFlagType(name, "bool", boolConv)
+	val, err := f.getFlagType(name, "bool")
 	if err != nil {
 		return false, err
 	}
