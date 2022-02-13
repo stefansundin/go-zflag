@@ -764,8 +764,10 @@ func (f *FlagSet) FlagUsagesForGroup(group string) string {
 func (f *FlagSet) Groups() []string {
 	groupsMap := make(map[string]bool)
 	groups := make([]string, 0)
+	hasUngrouped := false
 	f.VisitAll(func(flag *Flag) {
 		if flag.Group == "" {
+			hasUngrouped = true
 			return
 		}
 		if _, ok := groupsMap[flag.Group]; !ok {
@@ -775,7 +777,11 @@ func (f *FlagSet) Groups() []string {
 	})
 	sort.Strings(groups)
 
-	return append([]string{""}, groups...)
+	if hasUngrouped {
+		groups = append([]string{""}, groups...)
+	}
+
+	return groups
 }
 
 // PrintDefaults prints, to standard error unless configured otherwise,

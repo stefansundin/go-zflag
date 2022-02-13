@@ -433,7 +433,7 @@ func testParseWithUnknownFlags(f *FlagSet, t *testing.T) {
 		"-u=unknown3Value",
 		"-p",
 		"unknown4Value",
-		"-q", //another unknown with bool value
+		"-q", // another unknown with bool value
 		"-y",
 		"ee",
 		"--unknown7=unknown7value",
@@ -883,6 +883,73 @@ func (f *flagVar) Set(value string) error {
 
 func (f *flagVar) Type() string {
 	return "flagVar"
+}
+
+func TestGroups(t *testing.T) {
+	var fs FlagSet
+	fs.Init("test", ContinueOnError)
+	fs.StringP("string1", "s", "some", "string1 usage")
+	fs.BoolP("bool1", "b", false, "bool1 usage")
+
+	fs.String("string2", "some", "string2 usage in group1")
+	fs.Lookup("string2").Group = "group1"
+	fs.Bool("bool2", false, "bool2 usage in group1")
+	fs.Lookup("bool2").Group = "group1"
+
+	fs.String("string3", "some", "string3 usage in group2")
+	fs.Lookup("string3").Group = "group2"
+	fs.Bool("bool3", false, "bool3 usage in group2")
+	fs.Lookup("bool3").Group = "group2"
+
+	expectedGroupLen := 3
+	if expectedGroupLen != len(fs.Groups()) {
+		t.Fatalf("expected %d groups, got %d", expectedGroupLen, len(fs.Groups()))
+	}
+
+	expectedGroup1 := ""
+	if fs.Groups()[0] != expectedGroup1 {
+		t.Errorf("expected %q, got %q", expectedGroup1, fs.Groups()[0])
+	}
+
+	expectedGroup2 := "group1"
+	if fs.Groups()[1] != expectedGroup2 {
+		t.Errorf("expected %q, got %q", expectedGroup2, fs.Groups()[1])
+	}
+
+	expectedGroup3 := "group2"
+	if fs.Groups()[2] != expectedGroup3 {
+		t.Errorf("expected %q, got %q", expectedGroup3, fs.Groups()[2])
+	}
+}
+
+func TestEmptyUngrouped(t *testing.T) {
+	var fs FlagSet
+	fs.Init("test", ContinueOnError)
+
+	fs.String("string2", "some", "string2 usage in group1")
+	fs.Lookup("string2").Group = "group1"
+	fs.Bool("bool2", false, "bool2 usage in group1")
+	fs.Lookup("bool2").Group = "group1"
+
+	fs.String("string3", "some", "string3 usage in group2")
+	fs.Lookup("string3").Group = "group2"
+	fs.Bool("bool3", false, "bool3 usage in group2")
+	fs.Lookup("bool3").Group = "group2"
+
+	expectedGroupLen := 2
+	if expectedGroupLen != len(fs.Groups()) {
+		t.Fatalf("expected %d groups, got %d", expectedGroupLen, len(fs.Groups()))
+	}
+
+	expectedGroup1 := "group1"
+	if fs.Groups()[0] != expectedGroup1 {
+		t.Errorf("expected %q, got %q", expectedGroup1, fs.Groups()[0])
+	}
+
+	expectedGroup2 := "group2"
+	if fs.Groups()[1] != expectedGroup2 {
+		t.Errorf("expected %q, got %q", expectedGroup2, fs.Groups()[1])
+	}
 }
 
 func TestUserDefined(t *testing.T) {
