@@ -22,6 +22,14 @@ func setUpUI64SFlagSetWithDefault(isp *[]uint64) *FlagSet {
 	return f
 }
 
+func TestUI64SliceValueImplementsGetter(t *testing.T) {
+	var v Value = new(uint64SliceValue)
+
+	if _, ok := v.(Getter); !ok {
+		t.Fatalf("%T should implement the Getter interface", v)
+	}
+}
+
 func TestEmptyUI64S(t *testing.T) {
 	var is []uint64
 	f := setUpUI64SFlagSet(&is)
@@ -36,6 +44,13 @@ func TestEmptyUI64S(t *testing.T) {
 	}
 	if len(getI64S) != 0 {
 		t.Fatalf("got is %v with len=%d but expected length=0", getI64S, len(getI64S))
+	}
+	getUI64S2, err := f.Get("is")
+	if err != nil {
+		t.Fatal("got an error from Get():", err)
+	}
+	if len(getUI64S2.([]uint64)) != 0 {
+		t.Fatalf("got bs %v with len=%d but expected length=0", getUI64S2.([]uint64), len(getUI64S2.([]uint64)))
 	}
 }
 

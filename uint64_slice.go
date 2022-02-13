@@ -22,6 +22,10 @@ func newUint64SliceValue(val []uint64, p *[]uint64) *uint64SliceValue {
 	return isv
 }
 
+func (s *uint64SliceValue) Get() interface{} {
+	return *s.value
+}
+
 func (s *uint64SliceValue) Set(val string) error {
 	ss := strings.Split(val, ",")
 	out := make([]uint64, len(ss))
@@ -92,28 +96,9 @@ func (s *uint64SliceValue) GetSlice() []string {
 	return out
 }
 
-func uint64SliceConv(val string) (interface{}, error) {
-	val = strings.Trim(val, "[]")
-	// Empty string would cause a slice with one (empty) entry
-	if len(val) == 0 {
-		return []uint64{}, nil
-	}
-	ss := strings.Split(val, ",")
-	out := make([]uint64, len(ss))
-	for i, d := range ss {
-		var err error
-		out[i], err = strconv.ParseUint(d, 0, 64)
-		if err != nil {
-			return nil, err
-		}
-
-	}
-	return out, nil
-}
-
 // GetUint64Slice return the []uint64 value of a flag with the given name
 func (f *FlagSet) GetUint64Slice(name string) ([]uint64, error) {
-	val, err := f.getFlagType(name, "uint64Slice", uint64SliceConv)
+	val, err := f.getFlagType(name, "uint64Slice")
 	if err != nil {
 		return []uint64{}, err
 	}

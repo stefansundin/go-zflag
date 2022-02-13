@@ -22,6 +22,10 @@ func newInt16SliceValue(val []int16, p *[]int16) *int16SliceValue {
 	return isv
 }
 
+func (s *int16SliceValue) Get() interface{} {
+	return *s.value
+}
+
 func (s *int16SliceValue) Set(val string) error {
 	ss := strings.Split(val, ",")
 	out := make([]int16, len(ss))
@@ -98,30 +102,9 @@ func (s *int16SliceValue) GetSlice() []string {
 	return out
 }
 
-func int16SliceConv(val string) (interface{}, error) {
-	val = strings.Trim(val, "[]")
-	// Empty string would cause a slice with one (empty) entry
-	if len(val) == 0 {
-		return []int16{}, nil
-	}
-	ss := strings.Split(val, ",")
-	out := make([]int16, len(ss))
-	for i, d := range ss {
-		var err error
-		var temp64 int64
-		temp64, err = strconv.ParseInt(d, 0, 16)
-		if err != nil {
-			return nil, err
-		}
-		out[i] = int16(temp64)
-
-	}
-	return out, nil
-}
-
 // GetInt16Slice return the []int16 value of a flag with the given name
 func (f *FlagSet) GetInt16Slice(name string) ([]int16, error) {
-	val, err := f.getFlagType(name, "int16Slice", int16SliceConv)
+	val, err := f.getFlagType(name, "int16Slice")
 	if err != nil {
 		return []int16{}, err
 	}

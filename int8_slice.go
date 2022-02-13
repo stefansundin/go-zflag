@@ -22,6 +22,10 @@ func newInt8SliceValue(val []int8, p *[]int8) *int8SliceValue {
 	return isv
 }
 
+func (s *int8SliceValue) Get() interface{} {
+	return *s.value
+}
+
 func (s *int8SliceValue) Set(val string) error {
 	ss := strings.Split(val, ",")
 	out := make([]int8, len(ss))
@@ -98,30 +102,9 @@ func (s *int8SliceValue) GetSlice() []string {
 	return out
 }
 
-func int8SliceConv(val string) (interface{}, error) {
-	val = strings.Trim(val, "[]")
-	// Empty string would cause a slice with one (empty) entry
-	if len(val) == 0 {
-		return []int8{}, nil
-	}
-	ss := strings.Split(val, ",")
-	out := make([]int8, len(ss))
-	for i, d := range ss {
-		var err error
-		var temp64 int64
-		temp64, err = strconv.ParseInt(d, 0, 8)
-		if err != nil {
-			return nil, err
-		}
-		out[i] = int8(temp64)
-
-	}
-	return out, nil
-}
-
 // GetInt8Slice return the []int8 value of a flag with the given name
 func (f *FlagSet) GetInt8Slice(name string) ([]int8, error) {
-	val, err := f.getFlagType(name, "int8Slice", int8SliceConv)
+	val, err := f.getFlagType(name, "int8Slice")
 	if err != nil {
 		return []int8{}, err
 	}

@@ -22,6 +22,14 @@ func setUpUI16SFlagSetWithDefault(isp *[]uint16) *FlagSet {
 	return f
 }
 
+func TestUI16SliceValueImplementsGetter(t *testing.T) {
+	var v Value = new(uint16SliceValue)
+
+	if _, ok := v.(Getter); !ok {
+		t.Fatalf("%T should implement the Getter interface", v)
+	}
+}
+
 func TestEmptyUI16S(t *testing.T) {
 	var is []uint16
 	f := setUpUI16SFlagSet(&is)
@@ -36,6 +44,13 @@ func TestEmptyUI16S(t *testing.T) {
 	}
 	if len(getUI16S) != 0 {
 		t.Fatalf("got is %v with len=%d but expected length=0", getUI16S, len(getUI16S))
+	}
+	getUI16S2, err := f.Get("is")
+	if err != nil {
+		t.Fatal("got an error from Get():", err)
+	}
+	if len(getUI16S2.([]uint16)) != 0 {
+		t.Fatalf("got bs %v with len=%d but expected length=0", getUI16S2.([]uint16), len(getUI16S2.([]uint16)))
 	}
 }
 

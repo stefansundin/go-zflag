@@ -22,6 +22,14 @@ func setUpUI32SFlagSetWithDefault(isp *[]uint32) *FlagSet {
 	return f
 }
 
+func TestUI32SliceValueImplementsGetter(t *testing.T) {
+	var v Value = new(uint32SliceValue)
+
+	if _, ok := v.(Getter); !ok {
+		t.Fatalf("%T should implement the Getter interface", v)
+	}
+}
+
 func TestEmptyUI32S(t *testing.T) {
 	var is []uint32
 	f := setUpUI32SFlagSet(&is)
@@ -36,6 +44,13 @@ func TestEmptyUI32S(t *testing.T) {
 	}
 	if len(getUI32S) != 0 {
 		t.Fatalf("got is %v with len=%d but expected length=0", getUI32S, len(getUI32S))
+	}
+	getUI32S2, err := f.Get("is")
+	if err != nil {
+		t.Fatal("got an error from Get():", err)
+	}
+	if len(getUI32S2.([]uint32)) != 0 {
+		t.Fatalf("got bs %v with len=%d but expected length=0", getUI32S2.([]uint32), len(getUI32S2.([]uint32)))
 	}
 }
 

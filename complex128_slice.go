@@ -25,6 +25,10 @@ func newComplex128SliceValue(val []complex128, p *[]complex128) *complex128Slice
 	return isv
 }
 
+func (s *complex128SliceValue) Get() interface{} {
+	return *s.value
+}
+
 func (s *complex128SliceValue) Set(val string) error {
 	ss := strings.Split(val, ",")
 	out := make([]complex128, len(ss))
@@ -95,28 +99,9 @@ func (s *complex128SliceValue) GetSlice() []string {
 	return out
 }
 
-func complex128SliceConv(val string) (interface{}, error) {
-	val = strings.Trim(val, "[]")
-	// Empty string would cause a slice with one (empty) entry
-	if len(val) == 0 {
-		return []complex128{}, nil
-	}
-	ss := strings.Split(val, ",")
-	out := make([]complex128, len(ss))
-	for i, d := range ss {
-		var err error
-		out[i], err = strconv.ParseComplex(d, 128)
-		if err != nil {
-			return nil, err
-		}
-
-	}
-	return out, nil
-}
-
 // GetComplex128Slice return the []complex128 value of a flag with the given name
 func (f *FlagSet) GetComplex128Slice(name string) ([]complex128, error) {
-	val, err := f.getFlagType(name, "complex128Slice", complex128SliceConv)
+	val, err := f.getFlagType(name, "complex128Slice")
 	if err != nil {
 		return []complex128{}, err
 	}

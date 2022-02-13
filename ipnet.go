@@ -16,8 +16,8 @@ func (ipnet ipNetValue) String() string {
 	return n.String()
 }
 
-func (i *ipNetValue) Get() interface{} {
-	return net.IPNet(*i)
+func (ipnet *ipNetValue) Get() interface{} {
+	return net.IPNet(*ipnet)
 }
 
 func (ipnet *ipNetValue) Set(value string) error {

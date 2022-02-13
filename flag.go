@@ -110,9 +110,7 @@ type Value interface {
 }
 
 type Getter interface {
-	String() string
-	Set(string) error
-	Type() string
+	Value
 	Get() interface{}
 }
 
@@ -364,15 +362,16 @@ func (f *FlagSet) getFlagType(name string, ftype string) (interface{}, error) {
 		return nil, err
 	}
 
-	if v, ok := flag.Value.(Typed); ok && v.Type() != ftype {
-		err := fmt.Errorf("trying to get %s value of flag of type %s", ftype, v.Type())
-		return nil, err
+	if ftype != "" {
+		if v, ok := flag.Value.(Typed); ok && v.Type() != ftype {
+			err := fmt.Errorf("trying to get %q value of flag of type %q", ftype, v.Type())
+			return nil, err
+		}
 	}
 
-	var getter Getter
-	var ok bool
-	if getter, ok = flag.Value.(Getter); !ok {
-		return nil, fmt.Errorf("flag %s does not implement the Getter interface", name)
+	getter, ok := flag.Value.(Getter)
+	if !ok {
+		return nil, fmt.Errorf("flag %q does not implement the Getter interface", name)
 	}
 
 	return getter.Get(), nil

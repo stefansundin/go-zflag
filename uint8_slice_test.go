@@ -22,6 +22,14 @@ func setUpUI8SFlagSetWithDefault(isp *[]uint8) *FlagSet {
 	return f
 }
 
+func TestUI8SliceValueImplementsGetter(t *testing.T) {
+	var v Value = new(uint8SliceValue)
+
+	if _, ok := v.(Getter); !ok {
+		t.Fatalf("%T should implement the Getter interface", v)
+	}
+}
+
 func TestEmptyUI8S(t *testing.T) {
 	var is []uint8
 	f := setUpUI8SFlagSet(&is)
@@ -36,6 +44,13 @@ func TestEmptyUI8S(t *testing.T) {
 	}
 	if len(getUI8S) != 0 {
 		t.Fatalf("got is %v with len=%d but expected length=0", getUI8S, len(getUI8S))
+	}
+	getUI8S2, err := f.Get("is")
+	if err != nil {
+		t.Fatal("got an error from Get():", err)
+	}
+	if len(getUI8S2.([]uint8)) != 0 {
+		t.Fatalf("got bs %v with len=%d but expected length=0", getUI8S2.([]uint8), len(getUI8S2.([]uint8)))
 	}
 }
 

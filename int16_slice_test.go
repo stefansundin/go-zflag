@@ -22,6 +22,14 @@ func setUpI16SFlagSetWithDefault(isp *[]int16) *FlagSet {
 	return f
 }
 
+func TestI16SliceValueImplementsGetter(t *testing.T) {
+	var v Value = new(int16SliceValue)
+
+	if _, ok := v.(Getter); !ok {
+		t.Fatalf("%T should implement the Getter interface", v)
+	}
+}
+
 func TestEmptyI16S(t *testing.T) {
 	var is []int16
 	f := setUpI16SFlagSet(&is)
@@ -36,6 +44,13 @@ func TestEmptyI16S(t *testing.T) {
 	}
 	if len(getI16S) != 0 {
 		t.Fatalf("got is %v with len=%d but expected length=0", getI16S, len(getI16S))
+	}
+	getI16S2, err := f.Get("is")
+	if err != nil {
+		t.Fatal("got an error from Get():", err)
+	}
+	if len(getI16S2.([]int16)) != 0 {
+		t.Fatalf("got bs %v with len=%d but expected length=0", getI16S2.([]int16), len(getI16S2.([]int16)))
 	}
 }
 

@@ -25,6 +25,14 @@ func setUpC128SFlagSetWithDefault(c128sp *[]complex128) *FlagSet {
 	return f
 }
 
+func TestC128SliceValueImplementsGetter(t *testing.T) {
+	var v Value = new(complex128SliceValue)
+
+	if _, ok := v.(Getter); !ok {
+		t.Fatalf("%T should implement the Getter interface", v)
+	}
+}
+
 func TestEmptyC128S(t *testing.T) {
 	var c128s []complex128
 	f := setUpC128SFlagSet(&c128s)
@@ -39,6 +47,13 @@ func TestEmptyC128S(t *testing.T) {
 	}
 	if len(getC128S) != 0 {
 		t.Fatalf("got c128s %v with len=%d but expected length=0", getC128S, len(getC128S))
+	}
+	getC128S2, err := f.Get("c128s")
+	if err != nil {
+		t.Fatal("got an error from Get():", err)
+	}
+	if len(getC128S2.([]complex128)) != 0 {
+		t.Fatalf("got bs %v with len=%d but expected length=0", getC128S2.([]complex128), len(getC128S2.([]complex128)))
 	}
 }
 

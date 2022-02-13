@@ -16,6 +16,10 @@ func newComplex128Value(val complex128, p *complex128) *complex128Value {
 	return (*complex128Value)(p)
 }
 
+func (f *complex128Value) Get() interface{} {
+	return complex128(*f)
+}
+
 func (f *complex128Value) Set(s string) error {
 	v, err := strconv.ParseComplex(s, 128)
 	*f = complex128Value(v)
@@ -28,13 +32,9 @@ func (f *complex128Value) Type() string {
 
 func (f *complex128Value) String() string { return strconv.FormatComplex(complex128(*f), 'g', -1, 128) }
 
-func complex128Conv(sval string) (interface{}, error) {
-	return strconv.ParseComplex(sval, 128)
-}
-
 // GetComplex128 return the complex128 value of a flag with the given name
 func (f *FlagSet) GetComplex128(name string) (complex128, error) {
-	val, err := f.getFlagType(name, "complex128", complex128Conv)
+	val, err := f.getFlagType(name, "complex128")
 	if err != nil {
 		return 0, err
 	}
