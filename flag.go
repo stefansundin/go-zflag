@@ -760,7 +760,7 @@ func (f *FlagSet) FlagUsagesForGroup(group string) string {
 }
 
 // Groups return an array of unique flag groups sorted in the same order
-// as flags. Empty group (unassigned) is always placed last.
+// as flags. Empty group (unassigned) is always placed at the beginning.
 func (f *FlagSet) Groups() []string {
 	groupsMap := make(map[string]bool)
 	groups := make([]string, 0)
@@ -774,7 +774,8 @@ func (f *FlagSet) Groups() []string {
 		}
 	})
 	sort.Strings(groups)
-	return append(groups, "")
+
+	return append([]string{""}, groups...)
 }
 
 // PrintDefaults prints, to standard error unless configured otherwise,
@@ -990,22 +991,22 @@ func (f *FlagSet) usage() {
 	}
 }
 
-//--unknown (args will be empty)
-//--unknown --next-flag ... (args will be --next-flag ...)
-//--unknown arg ... (args will be arg ...)
+// --unknown (args will be empty)
+// --unknown --next-flag ... (args will be --next-flag ...)
+// --unknown arg ... (args will be arg ...)
 func (f *FlagSet) stripUnknownFlagValue(args []string) []string {
 	if len(args) == 0 {
-		//--unknown
+		// --unknown
 		return args
 	}
 
 	first := args[0]
 	if len(first) > 0 && first[0] == '-' {
-		//--unknown --next-flag ...
+		// --unknown --next-flag ...
 		return args
 	}
 
-	//--unknown arg ... (args will be arg ...)
+	// --unknown arg ... (args will be arg ...)
 	if len(args) > 1 {
 		f.addUnknownFlag(args[0])
 		return args[1:]
