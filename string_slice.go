@@ -6,6 +6,8 @@ package zflag
 import (
 	"bytes"
 	"encoding/csv"
+	"fmt"
+	"io"
 	"strings"
 )
 
@@ -29,6 +31,24 @@ func readAsCSV(val string) ([]string, error) {
 	stringReader := strings.NewReader(val)
 	csvReader := csv.NewReader(stringReader)
 	return csvReader.Read()
+}
+
+func readCSVKeyValue(val string) (map[string]string, error) {
+	strSlice, err := readAsCSV(val)
+	if err != nil && err != io.EOF {
+		return nil, err
+	}
+
+	out := make(map[string]string, len(strSlice))
+	for _, pair := range strSlice {
+		kv := strings.SplitN(pair, "=", 2)
+		if len(kv) != 2 {
+			return nil, fmt.Errorf("%s must be formatted as key=value", pair)
+		}
+		out[kv[0]] = kv[1]
+	}
+
+	return out, nil
 }
 
 func writeAsCSV(vals []string) (string, error) {

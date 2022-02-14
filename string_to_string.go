@@ -49,6 +49,7 @@ func (s *stringToStringValue) Set(val string) error {
 		}
 		out[kv[0]] = kv[1]
 	}
+
 	if !s.changed {
 		*s.value = out
 	} else {

@@ -5,9 +5,8 @@ package zflag
 
 import (
 	"bytes"
-	"fmt"
+	"io"
 	"strconv"
-	"strings"
 )
 
 // -- stringToInt64 Value
@@ -25,19 +24,21 @@ func newStringToInt64Value(val map[string]int64, p *map[string]int64) *stringToI
 
 // Format: a=1,b=2
 func (s *stringToInt64Value) Set(val string) error {
-	ss := strings.Split(val, ",")
-	out := make(map[string]int64, len(ss))
-	for _, pair := range ss {
-		kv := strings.SplitN(pair, "=", 2)
-		if len(kv) != 2 {
-			return fmt.Errorf("%s must be formatted as key=value", pair)
-		}
+	// read flag arguments with CSV parser
+	mapStrInt, err := readCSVKeyValue(val)
+	if err != nil && err != io.EOF {
+		return err
+	}
+
+	out := make(map[string]int64, len(mapStrInt))
+	for key, value := range mapStrInt {
 		var err error
-		out[kv[0]], err = strconv.ParseInt(kv[1], 10, 64)
+		out[key], err = strconv.ParseInt(value, 10, 64)
 		if err != nil {
 			return err
 		}
 	}
+
 	if !s.changed {
 		*s.value = out
 	} else {
