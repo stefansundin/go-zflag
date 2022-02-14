@@ -14,7 +14,7 @@ import (
 func setUpBytesHex(bytesHex *[]byte) *FlagSet {
 	f := NewFlagSet("test", ContinueOnError)
 	f.BytesHexVar(bytesHex, "bytes", []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 0}, "Some bytes in HEX")
-	f.BytesHexVarP(bytesHex, "bytes2", "B", []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 0}, "Some bytes in HEX")
+	f.BytesHexVar(bytesHex, "bytes2", []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 0}, "Some bytes in HEX", OptShorthand('B'))
 	return f
 }
 
@@ -38,7 +38,7 @@ func TestBytesHex(t *testing.T) {
 		success  bool
 		expected string
 	}{
-		/// Positive cases
+		// Positive cases
 		{"", true, ""}, // Is empty string OK ?
 		{"01", true, "01"},
 		{"0101", true, "0101"},
@@ -47,8 +47,8 @@ func TestBytesHex(t *testing.T) {
 
 		// Negative cases
 		{"0", false, ""},   // Short string
-		{"000", false, ""}, /// Odd-length string
-		{"qq", false, ""},  /// non-hex character
+		{"000", false, ""}, // Odd-length string
+		{"qq", false, ""},  // non-hex character
 	}
 
 	devnull, _ := os.Open(os.DevNull)
@@ -100,7 +100,7 @@ func TestBytesHex(t *testing.T) {
 func setUpBytesBase64(bytesBase64 *[]byte) *FlagSet {
 	f := NewFlagSet("test", ContinueOnError)
 	f.BytesBase64Var(bytesBase64, "bytes", []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 0}, "Some bytes in Base64")
-	f.BytesBase64VarP(bytesBase64, "bytes2", "B", []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 0}, "Some bytes in Base64")
+	f.BytesBase64Var(bytesBase64, "bytes2", []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 0}, "Some bytes in Base64", OptShorthand('B'))
 	return f
 }
 
@@ -110,7 +110,7 @@ func TestBytesBase64(t *testing.T) {
 		success  bool
 		expected string
 	}{
-		/// Positive cases
+		// Positive cases
 		{"", true, ""}, // Is empty string OK ?
 		{"AQ==", true, "AQ=="},
 

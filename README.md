@@ -30,13 +30,13 @@ zflag is available using the standard `go get` command.
 
 Install by running:
 
-``` bash
+```bash
 go get github.com/gowarden/zflag
 ```
 
 ## Supported Syntax
 
-``` plain
+```plain
 --flag    // boolean flags, or flags with no option default values
 --flag x  // only on flags without a default value
 --flag=x
@@ -47,7 +47,7 @@ different than a double dash. Single dashes signify a series of shorthand
 letters for flags. All but the last shorthand letter must be boolean flags
 or a flag with a default value
 
-``` plain
+```plain
 // boolean or flags where the 'no option default value' is set
 -f
 -f=true
@@ -68,7 +68,7 @@ but
 
 Slice flags can be specified multiple times, or specified with an equal sign and csv.
 
-``` plain
+```plain
 --sliceVal one --sliceVal=two
 --sliceVal=one,two
 ```
@@ -98,9 +98,8 @@ without an option, the flag will be set to the NoOptDefVal.
 
 **Example**:
 
-``` go
-var ip = flag.IntP("flagname", "f", 1234, "help message")
-flag.Lookup("flagname").NoOptDefVal = "4321"
+```go
+var ip = flag.Int("flagname", 1234, "help message", flag.OptShorthand('f'), flag.OptNoOptDefVal("4321"))
 ```
 
 **Results**:
@@ -120,7 +119,7 @@ comparison. Two examples of using the custom normalization func follow.
 
 **Example #1**: You want -, _, and . in flags to compare the same. aka --my-flag == --my_flag == --my.flag
 
-``` go
+```go
 func wordSepNormalizeFunc(f *zflag.FlagSet, name string) zflag.NormalizedName {
 	from := []string{"-", "_"}
 	to := "."
@@ -135,7 +134,7 @@ myFlagSet.SetNormalizeFunc(wordSepNormalizeFunc)
 
 **Example #2**: You want to alias two flags. aka --old-flag-name == --new-flag-name
 
-``` go
+```go
 func aliasNormalizeFunc(f *zflag.FlagSet, name string) zflag.NormalizedName {
 	switch name {
 	case "old-flag-name":
@@ -157,9 +156,9 @@ deprecated flag/shorthand is used.
 **Example #1**: You want to deprecate a flag named "badflag" as well as
 inform the users what flag they should use instead.
 
-``` go
+```go
 // deprecate a flag by specifying its name and a usage message
-flags.MarkDeprecated("badflag", "please use --good-flag instead")
+flags.Bool("badflag", false, "this does something", zflag.OptDeprecated("please use --good-flag instead"))
 ```
 
 This hides "badflag" from help text, and prints
@@ -169,16 +168,16 @@ when "badflag" is used.
 **Example #2**: You want to keep a flag name "noshorthandflag" but deprecate
 it's shortname "n".
 
-``` go
+```go
 // deprecate a flag shorthand by specifying its flag name and a usage message
-flags.MarkShorthandDeprecated("noshorthandflag", "please use --noshorthandflag only")
+flags.Bool("noshorthandflag", false, "this does something", zflag.OptShorthand("n"), zflag.OptShorthandDeprecated("please use --noshorthandflag only"))
 ```
 
 This hides the shortname "n" from help text, and prints
 `Flag shorthand -n has been deprecated, please use --noshorthandflag only`
-when the shorthand "n" is used.
+when the shorthand `n` is used.
 
-Note that usage message is essential here, and it should not be empty.
+Note that usage message is essential here, and it should not be empty. If it is empty, it will panic at runtime.
 
 ### Hidden flags
 
@@ -188,9 +187,9 @@ normal, however will not show up in usage/help text.
 **Example**: You have a flag named "secretFlag" that you need for internal use
 only and don't want it showing up in help text, or for its usage text to be available.
 
-``` go
+```go
 // hide a flag by specifying its name
-flags.MarkHidden("secretFlag")
+flags.Bool("secretFlag", false, "this does something", zflag.Hidden())
 ```
 
 ### Disable sorting of flags
@@ -199,8 +198,8 @@ It is possible to disable sorting of flags for help and usage message.
 
 **Example**:
 
-``` go
-flag.BoolP("verbose", "v", false, "verbose output")
+```go
+flag.Bool("verbose", false, "verbose output", flag.OptShorthand('v'))
 flag.String("coolflag", "yeaah", "it's really cool flag")
 flag.Int("usefulflag", 777, "sometimes it's very useful")
 flag.SortFlags = false
@@ -209,7 +208,7 @@ flag.PrintDefaults()
 
 **Output**:
 
-``` plain
+```plain
   -v, --verbose           verbose output
       --coolflag string   it's really cool flag (default "yeaah")
       --usefulflag int    sometimes it's very useful (default 777)
@@ -223,7 +222,7 @@ third-party dependencies (e.g. `golang/glog`).
 
 **Example**: You want to add the Go flags to the `CommandLine` flagset
 
-``` go
+```go
 import (
 	goflag "flag"
 	flag "github.com/gowarden/zflag"
@@ -242,8 +241,8 @@ func main() {
 A flag supporting both long and short formats can be created with any of the
 flag functions suffixed with `P`:
 
-``` go
-flag.BoolP("toggle", "t", false, "toggle help message")
+```go
+flag.Bool("toggle", false, "toggle help message", zflag.OptShorthand('t'))
 ```
 
 ### Shorthand-only flags
@@ -251,8 +250,8 @@ flag.BoolP("toggle", "t", false, "toggle help message")
 A shorthand-only flag can be created with any of the flag functions suffixed
 with `S`:
 
-``` go
-flag.StringS("value", "l", "", "value help message")
+```go
+flag.String("value", "", "value help message", zflag.OptShorthandOnly('l'))
 ```
 
 This flag can be looked up using it's long name, but will only be parsed when
@@ -261,10 +260,10 @@ the short form is passed.
 ### Unknown flags
 
 Normally zflag will error when an unknown flag is passed, but it's also possible
-to disable that using `FlagSet.ParseErrorsWhitelist.UnknownFlags`:
+to disable that using `FlagSet.ParseErrorsAllowlist.UnknownFlags`:
 
-``` go
-flags.ParseErrorsWhitelist.UnknownFlags = true
+```go
+flags.ParseErrorsAllowlist.UnknownFlags = true
 flag.Parse()
 ```
 
@@ -274,39 +273,39 @@ These can then be obtained as a slice of strings using `FlagSet.GetUnknownFlags(
 
 There are two methods to set a custom type to be printed in the usage.
 
-First, it's possible to set explicitly with `CustomUsageType`:
+First, it's possible to set explicitly with `UsageType`:
 
-``` go
-flag.String("character", "", "character name")
-flag.Lookup("character").CustomUsageType = "enum"
+```go
+flag.String("character", "", "character name", zflag.OptUsageType("enum"))
 ```
 
 Output:
 
-``` plain
+```plain
   --character enum   character name (default "")
 ```
 
-Alternatively, it's possbile to include backticks around a single word in the
+Alternatively, it's possible to include backticks around a single word in the
 usage string, which will be extracted and printed with the usage:
 
-``` go
+```go
 flag.String("character", "", "`character` name")
 ```
 
 Output:
 
-``` plain
+```plain
   --character character   character name (default "")
 ```
 
-_Note: This unquoting behavior can be disabled with `Flag.DisableUnquoteUsage`_.
+_Note: This unquoting behavior can be disabled with `Flag.DisableUnquoteUsage`, or `zflag.OptDisableUnquoteUsage`_.
 
 ### Customizing flag usages
 
 You can customize the flag usages by overriding the `FlagSet.FlagUsageFormatter` field
 with a struct that implements [`FlagUsageFormatter`](./formatter.go).
-You can re-implement the whole interface or embed the `DefaultFlagUsageFormatter`.
+You can re-implement the whole interface or embed the `DefaultFlagUsageFormatter` to only
+re-implement some some functions.
 
 For example:
 
@@ -339,14 +338,13 @@ The printing of a flag's default value can be suppressed with `Flag.DisablePrint
 
 **Example**:
 
-``` go
-flag.Int("in", -1, "help message")
-flag.Lookup("in").DisablePrintDefault = true
+```go
+flag.Int("in", -1, "help message", zflag.OptDisablePrintDefault(true))
 ```
 
 **Output**:
 
-``` plain
+```plain
   --in int   help message
 ```
 
@@ -357,6 +355,6 @@ Normally zflag will handle `--help` and `-h` when the flags aren't explicitly de
 If for some reason there is a need to capture the error returned in this condition, it
 is possible to disable this built-in handling.
 
-``` go
+```go
 myFlagSet.DisableBuiltinHelp = true
 ```

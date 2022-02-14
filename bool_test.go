@@ -57,8 +57,7 @@ func (v *triStateValue) Type() string {
 func setUpFlagSet(tristate *triStateValue) *FlagSet {
 	f := NewFlagSet("test", ContinueOnError)
 	*tristate = triStateFalse
-	flag := f.VarPF(tristate, "tristate", "t", "tristate value (true, maybe or false)")
-	flag.NoOptDefVal = "true"
+	f.Var(tristate, "tristate", "tristate value (true, maybe or false)", OptShorthand('t'), OptNoOptDefVal("true"))
 	return f
 }
 
@@ -171,8 +170,8 @@ func TestInvalidValue(t *testing.T) {
 }
 
 func TestBoolP(t *testing.T) {
-	b := BoolP("bool", "b", false, "bool value in CommandLine")
-	c := BoolP("c", "c", false, "other bool value")
+	b := Bool("bool", false, "bool value in CommandLine", OptShorthand('b'))
+	c := Bool("c", false, "other bool value", OptShorthand('c'))
 	args := []string{"--bool"}
 	if err := CommandLine.Parse(args); err != nil {
 		t.Error("expected no error, got ", err)

@@ -90,74 +90,32 @@ func (f *FlagSet) MustGetStringToInt64(name string) map[string]int64 {
 	return val
 }
 
-// StringToInt64Var defines a string flag with specified name, default value, and usage string.
-// The argument p point64s to a map[string]int64 variable in which to store the values of the multiple flags.
-// The value of each argument will not try to be separated by comma
-func (f *FlagSet) StringToInt64Var(p *map[string]int64, name string, value map[string]int64, usage string) {
-	f.StringToInt64VarP(p, name, "", value, usage)
+// StringToInt64Var defines a map[string]int64 flag with specified name, default value, and usage string.
+// The argument p points to a map[string]int64 variable in which to store the values of multiple flags.
+// The values will be separated on comma. Items can be quoted, or escape commas to avoid splitting.
+func (f *FlagSet) StringToInt64Var(p *map[string]int64, name string, value map[string]int64, usage string, opts ...Opt) {
+	f.Var(newStringToInt64Value(value, p), name, usage, opts...)
 }
 
-// StringToInt64VarP is like StringToInt64Var, but accepts a shorthand letter that can be used after a single dash.
-func (f *FlagSet) StringToInt64VarP(p *map[string]int64, name, shorthand string, value map[string]int64, usage string) {
-	f.VarP(newStringToInt64Value(value, p), name, shorthand, usage)
+// StringToInt64Var defines a map[string]int64 flag with specified name, default value, and usage string.
+// The argument p points to a map[string]int64 variable in which to store the values of multiple flags.
+// The values will be separated on comma. Items can be quoted, or escape commas to avoid splitting.
+func StringToInt64Var(p *map[string]int64, name string, value map[string]int64, usage string, opts ...Opt) {
+	CommandLine.StringToInt64Var(p, name, value, usage, opts...)
 }
 
-// StringToInt64VarS is like StringToInt64Var, but accepts a shorthand letter that can be used after a single dash, alone.
-func (f *FlagSet) StringToInt64VarS(p *map[string]int64, name, shorthand string, value map[string]int64, usage string) {
-	f.VarS(newStringToInt64Value(value, p), name, shorthand, usage)
-}
-
-// StringToInt64Var defines a string flag with specified name, default value, and usage string.
-// The argument p point64s to a map[string]int64 variable in which to store the value of the flag.
-// The value of each argument will not try to be separated by comma
-func StringToInt64Var(p *map[string]int64, name string, value map[string]int64, usage string) {
-	CommandLine.StringToInt64Var(p, name, value, usage)
-}
-
-// StringToInt64VarP is like StringToInt64Var, but accepts a shorthand letter that can be used after a single dash.
-func StringToInt64VarP(p *map[string]int64, name, shorthand string, value map[string]int64, usage string) {
-	CommandLine.StringToInt64VarP(p, name, shorthand, value, usage)
-}
-
-// StringToInt64VarS is like StringToInt64Var, but accepts a shorthand letter that can be used after a single dash, alone.
-func StringToInt64VarS(p *map[string]int64, name, shorthand string, value map[string]int64, usage string) {
-	CommandLine.StringToInt64VarS(p, name, shorthand, value, usage)
-}
-
-// StringToInt64 defines a string flag with specified name, default value, and usage string.
-// The return value is the address of a map[string]int64 variable that stores the value of the flag.
-// The value of each argument will not try to be separated by comma
-func (f *FlagSet) StringToInt64(name string, value map[string]int64, usage string) *map[string]int64 {
-	return f.StringToInt64P(name, "", value, usage)
-}
-
-// StringToInt64P is like StringToInt64, but accepts a shorthand letter that can be used after a single dash.
-func (f *FlagSet) StringToInt64P(name, shorthand string, value map[string]int64, usage string) *map[string]int64 {
-	p := map[string]int64{}
-	f.StringToInt64VarP(&p, name, shorthand, value, usage)
+// StringToInt64 defines a map[string]int64 flag with specified name, default value, and usage string.
+// The return value is the address of a map[string]int64 variable that stores the values of multiple flags.
+// The values will be separated on comma. Items can be quoted, or escape commas to avoid splitting.
+func (f *FlagSet) StringToInt64(name string, value map[string]int64, usage string, opts ...Opt) *map[string]int64 {
+	var p map[string]int64
+	f.StringToInt64Var(&p, name, value, usage, opts...)
 	return &p
 }
 
-// StringToInt64S is like StringToInt64, but accepts a shorthand letter that can be used after a single dash, alone.
-func (f *FlagSet) StringToInt64S(name, shorthand string, value map[string]int64, usage string) *map[string]int64 {
-	p := map[string]int64{}
-	f.StringToInt64VarS(&p, name, shorthand, value, usage)
-	return &p
-}
-
-// StringToInt64 defines a string flag with specified name, default value, and usage string.
-// The return value is the address of a map[string]int64 variable that stores the value of the flag.
-// The value of each argument will not try to be separated by comma
-func StringToInt64(name string, value map[string]int64, usage string) *map[string]int64 {
-	return CommandLine.StringToInt64(name, value, usage)
-}
-
-// StringToInt64P is like StringToInt64, but accepts a shorthand letter that can be used after a single dash.
-func StringToInt64P(name, shorthand string, value map[string]int64, usage string) *map[string]int64 {
-	return CommandLine.StringToInt64P(name, shorthand, value, usage)
-}
-
-// StringToInt64S is like StringToInt64, but accepts a shorthand letter that can be used after a single dash, alone.
-func StringToInt64S(name, shorthand string, value map[string]int64, usage string) *map[string]int64 {
-	return CommandLine.StringToInt64S(name, shorthand, value, usage)
+// StringToInt64 defines a map[string]int64 flag with specified name, default value, and usage string.
+// The return value is the address of a map[string]int64 variable that stores the values of multiple flags.
+// The values will be separated on comma. Items can be quoted, or escape commas to avoid splitting.
+func StringToInt64(name string, value map[string]int64, usage string, opts ...Opt) *map[string]int64 {
+	return CommandLine.StringToInt64(name, value, usage, opts...)
 }

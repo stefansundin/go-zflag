@@ -11,7 +11,7 @@ import (
 
 func setUpCount(c *int) *FlagSet {
 	f := NewFlagSet("test", ContinueOnError)
-	f.CountVarP(c, "verbose", "v", "a counter")
+	f.CountVar(c, "verbose", "a counter", OptShorthand('v'))
 	return f
 }
 

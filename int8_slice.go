@@ -120,70 +120,28 @@ func (f *FlagSet) MustGetInt8Slice(name string) []int8 {
 	return val
 }
 
-// Int8SliceVar defines a int8Slice flag with specified name, default value, and usage string.
+// Int8SliceVar defines a []int8 flag with specified name, default value, and usage string.
 // The argument p points to a []int8 variable in which to store the value of the flag.
-func (f *FlagSet) Int8SliceVar(p *[]int8, name string, value []int8, usage string) {
-	f.Int8SliceVarP(p, name, "", value, usage)
+func (f *FlagSet) Int8SliceVar(p *[]int8, name string, value []int8, usage string, opts ...Opt) {
+	f.Var(newInt8SliceValue(value, p), name, usage, opts...)
 }
 
-// Int8SliceVarP is like Int8SliceVar, but accepts a shorthand letter that can be used after a single dash.
-func (f *FlagSet) Int8SliceVarP(p *[]int8, name, shorthand string, value []int8, usage string) {
-	f.VarP(newInt8SliceValue(value, p), name, shorthand, usage)
-}
-
-// Int8SliceVarS is like Int8SliceVar, but accepts a shorthand letter that can be used after a single dash, alone.
-func (f *FlagSet) Int8SliceVarS(p *[]int8, name, shorthand string, value []int8, usage string) {
-	f.VarS(newInt8SliceValue(value, p), name, shorthand, usage)
-}
-
-// Int8SliceVar defines a int8[] flag with specified name, default value, and usage string.
-// The argument p points to a int8[] variable in which to store the value of the flag.
-func Int8SliceVar(p *[]int8, name string, value []int8, usage string) {
-	CommandLine.Int8SliceVar(p, name, value, usage)
-}
-
-// Int8SliceVarP is like Int8SliceVar, but accepts a shorthand letter that can be used after a single dash.
-func Int8SliceVarP(p *[]int8, name, shorthand string, value []int8, usage string) {
-	CommandLine.Int8SliceVarP(p, name, shorthand, value, usage)
-}
-
-// Int8SliceVarS is like Int8SliceVar, but accepts a shorthand letter that can be used after a single dash, alone.
-func Int8SliceVarS(p *[]int8, name, shorthand string, value []int8, usage string) {
-	CommandLine.Int8SliceVarS(p, name, shorthand, value, usage)
+// Int8SliceVar defines a []int8 flag with specified name, default value, and usage string.
+// The argument p points to a []int8 variable in which to store the value of the flag.
+func Int8SliceVar(p *[]int8, name string, value []int8, usage string, opts ...Opt) {
+	CommandLine.Int8SliceVar(p, name, value, usage, opts...)
 }
 
 // Int8Slice defines a []int8 flag with specified name, default value, and usage string.
 // The return value is the address of a []int8 variable that stores the value of the flag.
-func (f *FlagSet) Int8Slice(name string, value []int8, usage string) *[]int8 {
-	return f.Int8SliceP(name, "", value, usage)
-}
-
-// Int8SliceP is like Int8Slice, but accepts a shorthand letter that can be used after a single dash.
-func (f *FlagSet) Int8SliceP(name, shorthand string, value []int8, usage string) *[]int8 {
-	p := []int8{}
-	f.Int8SliceVarP(&p, name, shorthand, value, usage)
-	return &p
-}
-
-// Int8SliceS is like Int8Slice, but accepts a shorthand letter that can be used after a single dash, alone.
-func (f *FlagSet) Int8SliceS(name, shorthand string, value []int8, usage string) *[]int8 {
-	p := []int8{}
-	f.Int8SliceVarS(&p, name, shorthand, value, usage)
+func (f *FlagSet) Int8Slice(name string, value []int8, usage string, opts ...Opt) *[]int8 {
+	var p []int8
+	f.Int8SliceVar(&p, name, value, usage, opts...)
 	return &p
 }
 
 // Int8Slice defines a []int8 flag with specified name, default value, and usage string.
 // The return value is the address of a []int8 variable that stores the value of the flag.
-func Int8Slice(name string, value []int8, usage string) *[]int8 {
-	return CommandLine.Int8Slice(name, value, usage)
-}
-
-// Int8SliceP is like Int8Slice, but accepts a shorthand letter that can be used after a single dash.
-func Int8SliceP(name, shorthand string, value []int8, usage string) *[]int8 {
-	return CommandLine.Int8SliceP(name, shorthand, value, usage)
-}
-
-// Int8SliceS is like Int8Slice, but accepts a shorthand letter that can be used after a single dash, alone.
-func Int8SliceS(name, shorthand string, value []int8, usage string) *[]int8 {
-	return CommandLine.Int8SliceS(name, shorthand, value, usage)
+func Int8Slice(name string, value []int8, usage string, opts ...Opt) *[]int8 {
+	return CommandLine.Int8Slice(name, value, usage, opts...)
 }

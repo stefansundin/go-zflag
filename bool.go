@@ -58,70 +58,26 @@ func (f *FlagSet) MustGetBool(name string) bool {
 
 // BoolVar defines a bool flag with specified name, default value, and usage string.
 // The argument p points to a bool variable in which to store the value of the flag.
-func (f *FlagSet) BoolVar(p *bool, name string, value bool, usage string) {
-	f.BoolVarP(p, name, "", value, usage)
-}
-
-// BoolVarP is like BoolVar, but accepts a shorthand letter that can be used after a single dash.
-func (f *FlagSet) BoolVarP(p *bool, name, shorthand string, value bool, usage string) {
-	flag := f.VarPF(newBoolValue(value, p), name, shorthand, usage)
-	flag.NoOptDefVal = "true"
-}
-
-// BoolVarS is like BoolVar, but accepts a shorthand letter to be used after a single dash, alone.
-func (f *FlagSet) BoolVarS(p *bool, name string, shorthand string, value bool, usage string) {
-	flag := f.VarSF(newBoolValue(value, p), name, shorthand, usage)
-	flag.NoOptDefVal = "true"
+func (f *FlagSet) BoolVar(p *bool, name string, value bool, usage string, opts ...Opt) {
+	f.Var(newBoolValue(value, p), name, usage, append(opts, OptNoOptDefVal("true"))...)
 }
 
 // BoolVar defines a bool flag with specified name, default value, and usage string.
 // The argument p points to a bool variable in which to store the value of the flag.
-func BoolVar(p *bool, name string, value bool, usage string) {
-	CommandLine.BoolVar(p, name, value, usage)
-}
-
-// BoolVarP is like BoolVar, but accepts a shorthand letter that can be used after a single dash.
-func BoolVarP(p *bool, name, shorthand string, value bool, usage string) {
-	CommandLine.BoolVarP(p, name, shorthand, value, usage)
-}
-
-// BoolVarS is like BoolVar, but accepts a shorthand letter to be used after a single dash, alone.
-func BoolVarS(p *bool, name string, shorthand string, value bool, usage string) {
-	CommandLine.BoolVarS(p, name, shorthand, value, usage)
+func BoolVar(p *bool, name string, value bool, usage string, opts ...Opt) {
+	CommandLine.BoolVar(p, name, value, usage, opts...)
 }
 
 // Bool defines a bool flag with specified name, default value, and usage string.
 // The return value is the address of a bool variable that stores the value of the flag.
-func (f *FlagSet) Bool(name string, value bool, usage string) *bool {
-	return f.BoolP(name, "", value, usage)
-}
-
-// BoolP is like Bool, but accepts a shorthand letter that can be used after a single dash.
-func (f *FlagSet) BoolP(name, shorthand string, value bool, usage string) *bool {
-	p := new(bool)
-	f.BoolVarP(p, name, shorthand, value, usage)
-	return p
-}
-
-// BoolS is like Bool, but accepts a shorthand letter to be used after a single dash, alone.
-func (f *FlagSet) BoolS(name string, shorthand string, value bool, usage string) *bool {
-	p := new(bool)
-	f.BoolVarS(p, name, shorthand, value, usage)
-	return p
+func (f *FlagSet) Bool(name string, value bool, usage string, opts ...Opt) *bool {
+	var p bool
+	f.BoolVar(&p, name, value, usage, opts...)
+	return &p
 }
 
 // Bool defines a bool flag with specified name, default value, and usage string.
 // The return value is the address of a bool variable that stores the value of the flag.
-func Bool(name string, value bool, usage string) *bool {
-	return CommandLine.Bool(name, value, usage)
-}
-
-// BoolP is like Bool, but accepts a shorthand letter that can be used after a single dash.
-func BoolP(name, shorthand string, value bool, usage string) *bool {
-	return CommandLine.BoolP(name, shorthand, value, usage)
-}
-
-// BoolS is like Bool, but accepts a shorthand letter to be used after a single dash, alone.
-func BoolS(name string, shorthand string, value bool, usage string) *bool {
-	return CommandLine.BoolS(name, shorthand, value, usage)
+func Bool(name string, value bool, usage string, opts ...Opt) *bool {
+	return CommandLine.Bool(name, value, usage, opts...)
 }

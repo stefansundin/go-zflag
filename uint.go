@@ -47,70 +47,28 @@ func (f *FlagSet) MustGetUint(name string) uint {
 	return val
 }
 
-// UintVar defines a uint flag with specified name, default value, and usage string.
-// The argument p points to a uint variable in which to store the value of the flag.
-func (f *FlagSet) UintVar(p *uint, name string, value uint, usage string) {
-	f.UintVarP(p, name, "", value, usage)
+// UintVar defines an uint flag with specified name, default value, and usage string.
+// The argument p points to an uint variable in which to store the value of the flag.
+func (f *FlagSet) UintVar(p *uint, name string, value uint, usage string, opts ...Opt) {
+	f.Var(newUintValue(value, p), name, usage, opts...)
 }
 
-// UintVarP is like UintVar, but accepts a shorthand letter that can be used after a single dash.
-func (f *FlagSet) UintVarP(p *uint, name, shorthand string, value uint, usage string) {
-	f.VarP(newUintValue(value, p), name, shorthand, usage)
+// UintVar defines an uint flag with specified name, default value, and usage string.
+// The argument p points to an uint variable in which to store the value of the flag.
+func UintVar(p *uint, name string, value uint, usage string, opts ...Opt) {
+	CommandLine.UintVar(p, name, value, usage, opts...)
 }
 
-// UintVarS is like UintVar, but accepts a shorthand letter that can be used after a single dash, alone.
-func (f *FlagSet) UintVarS(p *uint, name, shorthand string, value uint, usage string) {
-	f.VarS(newUintValue(value, p), name, shorthand, usage)
+// Uint defines an uint flag with specified name, default value, and usage string.
+// The return value is the address of an uint variable that stores the value of the flag.
+func (f *FlagSet) Uint(name string, value uint, usage string, opts ...Opt) *uint {
+	var p uint
+	f.UintVar(&p, name, value, usage, opts...)
+	return &p
 }
 
-// UintVar defines a uint flag with specified name, default value, and usage string.
-// The argument p points to a uint  variable in which to store the value of the flag.
-func UintVar(p *uint, name string, value uint, usage string) {
-	CommandLine.UintVar(p, name, value, usage)
-}
-
-// UintVarP is like UintVar, but accepts a shorthand letter that can be used after a single dash.
-func UintVarP(p *uint, name, shorthand string, value uint, usage string) {
-	CommandLine.UintVarP(p, name, shorthand, value, usage)
-}
-
-// UintVarS is like UintVar, but accepts a shorthand letter that can be used after a single dash, alone.
-func UintVarS(p *uint, name, shorthand string, value uint, usage string) {
-	CommandLine.UintVarS(p, name, shorthand, value, usage)
-}
-
-// Uint defines a uint flag with specified name, default value, and usage string.
-// The return value is the address of a uint  variable that stores the value of the flag.
-func (f *FlagSet) Uint(name string, value uint, usage string) *uint {
-	return f.UintP(name, "", value, usage)
-}
-
-// UintP is like Uint, but accepts a shorthand letter that can be used after a single dash.
-func (f *FlagSet) UintP(name, shorthand string, value uint, usage string) *uint {
-	p := new(uint)
-	f.UintVarP(p, name, shorthand, value, usage)
-	return p
-}
-
-// UintS is like Uint, but accepts a shorthand letter that can be used after a single dash, alone.
-func (f *FlagSet) UintS(name, shorthand string, value uint, usage string) *uint {
-	p := new(uint)
-	f.UintVarS(p, name, shorthand, value, usage)
-	return p
-}
-
-// Uint defines a uint flag with specified name, default value, and usage string.
-// The return value is the address of a uint  variable that stores the value of the flag.
-func Uint(name string, value uint, usage string) *uint {
-	return CommandLine.Uint(name, value, usage)
-}
-
-// UintP is like Uint, but accepts a shorthand letter that can be used after a single dash.
-func UintP(name, shorthand string, value uint, usage string) *uint {
-	return CommandLine.UintP(name, shorthand, value, usage)
-}
-
-// UintS is like Uint, but accepts a shorthand letter that can be used after a single dash, alone.
-func UintS(name, shorthand string, value uint, usage string) *uint {
-	return CommandLine.UintS(name, shorthand, value, usage)
+// Uint defines an uint flag with specified name, default value, and usage string.
+// The return value is the address of an uint variable that stores the value of the flag.
+func Uint(name string, value uint, usage string, opts ...Opt) *uint {
+	return CommandLine.Uint(name, value, usage, opts...)
 }

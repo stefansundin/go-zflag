@@ -136,68 +136,26 @@ func (f *FlagSet) MustGetBoolSlice(name string) []bool {
 
 // BoolSliceVar defines a boolSlice flag with specified name, default value, and usage string.
 // The argument p points to a []bool variable in which to store the value of the flag.
-func (f *FlagSet) BoolSliceVar(p *[]bool, name string, value []bool, usage string) {
-	f.BoolSliceVarP(p, name, "", value, usage)
-}
-
-// BoolSliceVarP is like BoolSliceVar, but accepts a shorthand letter that can be used after a single dash.
-func (f *FlagSet) BoolSliceVarP(p *[]bool, name, shorthand string, value []bool, usage string) {
-	f.VarP(newBoolSliceValue(value, p), name, shorthand, usage)
-}
-
-// BoolSliceVarS is like BoolSliceVar, but accepts a shorthand letter that can be used after a single dash, alone.
-func (f *FlagSet) BoolSliceVarS(p *[]bool, name string, shorthand string, value []bool, usage string) {
-	f.VarS(newBoolSliceValue(value, p), name, shorthand, usage)
+func (f *FlagSet) BoolSliceVar(p *[]bool, name string, value []bool, usage string, opts ...Opt) {
+	f.Var(newBoolSliceValue(value, p), name, usage, opts...)
 }
 
 // BoolSliceVar defines a []bool flag with specified name, default value, and usage string.
 // The argument p points to a []bool variable in which to store the value of the flag.
-func BoolSliceVar(p *[]bool, name string, value []bool, usage string) {
-	CommandLine.BoolSliceVar(p, name, value, usage)
-}
-
-// BoolSliceVarP is like BoolSliceVar, but accepts a shorthand letter that can be used after a single dash.
-func BoolSliceVarP(p *[]bool, name, shorthand string, value []bool, usage string) {
-	CommandLine.BoolSliceVarP(p, name, shorthand, value, usage)
-}
-
-// BoolSliceVarS is like BoolSliceVar, but accepts a shorthand letter that can be used after a single dash, alone.
-func BoolSliceVarS(p *[]bool, name string, shorthand string, value []bool, usage string) {
-	CommandLine.BoolSliceVarS(p, name, shorthand, value, usage)
+func BoolSliceVar(p *[]bool, name string, value []bool, usage string, opts ...Opt) {
+	CommandLine.BoolSliceVar(p, name, value, usage, opts...)
 }
 
 // BoolSlice defines a []bool flag with specified name, default value, and usage string.
 // The return value is the address of a []bool variable that stores the value of the flag.
-func (f *FlagSet) BoolSlice(name string, value []bool, usage string) *[]bool {
-	return f.BoolSliceP(name, "", value, usage)
-}
-
-// BoolSliceP is like BoolSlice, but accepts a shorthand letter that can be used after a single dash.
-func (f *FlagSet) BoolSliceP(name, shorthand string, value []bool, usage string) *[]bool {
-	p := []bool{}
-	f.BoolSliceVarP(&p, name, shorthand, value, usage)
-	return &p
-}
-
-// BoolSliceS is like BoolSlice, but accepts a shorthand letter that can be used after a single dash, alone.
-func (f *FlagSet) BoolSliceS(name string, shorthand string, value []bool, usage string) *[]bool {
-	p := []bool{}
-	f.BoolSliceVarS(&p, name, shorthand, value, usage)
+func (f *FlagSet) BoolSlice(name string, value []bool, usage string, opts ...Opt) *[]bool {
+	var p []bool
+	f.BoolSliceVar(&p, name, value, usage, opts...)
 	return &p
 }
 
 // BoolSlice defines a []bool flag with specified name, default value, and usage string.
 // The return value is the address of a []bool variable that stores the value of the flag.
-func BoolSlice(name string, value []bool, usage string) *[]bool {
-	return CommandLine.BoolSlice(name, value, usage)
-}
-
-// BoolSliceP is like BoolSlice, but accepts a shorthand letter that can be used after a single dash.
-func BoolSliceP(name, shorthand string, value []bool, usage string) *[]bool {
-	return CommandLine.BoolSliceP(name, shorthand, value, usage)
-}
-
-// BoolSliceS is like BoolSlice, but accepts a shorthand letter that can be used after a single dash, alone.
-func BoolSliceS(name string, shorthand string, value []bool, usage string) *[]bool {
-	return CommandLine.BoolSliceS(name, shorthand, value, usage)
+func BoolSlice(name string, value []bool, usage string, opts ...Opt) *[]bool {
+	return CommandLine.BoolSlice(name, value, usage, opts...)
 }

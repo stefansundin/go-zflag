@@ -135,7 +135,7 @@ func TestAnnotation(t *testing.T) {
 		t.Errorf("Expected error setting annotation on non-existent flag")
 	}
 
-	f.StringP("stringa", "a", "", "string value")
+	f.String("stringa", "", "string value", OptShorthand('a'))
 	if err := f.SetAnnotation("stringa", "key", nil); err != nil {
 		t.Errorf("Unexpected error setting new nil annotation: %v", err)
 	}
@@ -143,7 +143,7 @@ func TestAnnotation(t *testing.T) {
 		t.Errorf("Unexpected annotation: %v", annotation)
 	}
 
-	f.StringP("stringb", "b", "", "string2 value")
+	f.String("stringb", "", "string2 value", OptShorthand('b'))
 	if err := f.SetAnnotation("stringb", "key", []string{"value1"}); err != nil {
 		t.Errorf("Unexpected error setting new annotation: %v", err)
 	}
@@ -406,14 +406,14 @@ func testParseAll(f *FlagSet, t *testing.T) {
 	if f.Parsed() {
 		t.Error("f.Parse() = true before Parse")
 	}
-	f.BoolP("boola", "a", false, "bool value")
-	f.BoolP("boolb", "b", false, "bool2 value")
-	f.BoolP("boolc", "c", false, "bool3 value")
-	f.BoolP("boold", "d", false, "bool4 value")
-	f.StringP("stringa", "s", "0", "string value")
-	f.StringP("stringz", "z", "0", "string value")
-	f.StringP("stringx", "x", "0", "string value")
-	f.StringP("stringy", "y", "0", "string value")
+	f.Bool("boola", false, "bool value", OptShorthand('a'))
+	f.Bool("boolb", false, "bool2 value", OptShorthand('b'))
+	f.Bool("boolc", false, "bool3 value", OptShorthand('c'))
+	f.Bool("boold", false, "bool4 value", OptShorthand('d'))
+	f.String("stringa", "0", "string value", OptShorthand('s'))
+	f.String("stringz", "0", "string value", OptShorthand('z'))
+	f.String("stringx", "0", "string value", OptShorthand('x'))
+	f.String("stringy", "0", "string value", OptShorthand('y'))
 	f.Lookup("stringx").NoOptDefVal = "1"
 	args := []string{
 		"-ab",
@@ -461,16 +461,16 @@ func testParseWithUnknownFlags(f *FlagSet, t *testing.T) {
 	}
 	f.ParseErrorsAllowlist.UnknownFlags = true
 
-	f.BoolP("boola", "a", false, "bool value")
-	f.BoolP("boolb", "b", false, "bool2 value")
-	f.BoolP("boolc", "c", false, "bool3 value")
-	f.BoolP("boold", "d", false, "bool4 value")
-	f.BoolP("boole", "e", false, "bool4 value")
-	f.StringP("stringa", "s", "0", "string value")
-	f.StringP("stringz", "z", "0", "string value")
-	f.StringP("stringx", "x", "0", "string value")
-	f.StringP("stringy", "y", "0", "string value")
-	f.StringP("stringo", "o", "0", "string value")
+	f.Bool("boola", false, "bool value", OptShorthand('a'))
+	f.Bool("boolb", false, "bool2 value", OptShorthand('b'))
+	f.Bool("boolc", false, "bool3 value", OptShorthand('c'))
+	f.Bool("boold", false, "bool4 value", OptShorthand('d'))
+	f.Bool("boole", false, "bool4 value", OptShorthand('e'))
+	f.String("stringa", "0", "string value", OptShorthand('s'))
+	f.String("stringz", "0", "string value", OptShorthand('z'))
+	f.String("stringx", "0", "string value", OptShorthand('x'))
+	f.String("stringy", "0", "string value", OptShorthand('y'))
+	f.String("stringo", "0", "string value", OptShorthand('o'))
 	f.Lookup("stringx").NoOptDefVal = "1"
 	args := []string{
 		"-ab",
@@ -555,13 +555,13 @@ func TestShorthand(t *testing.T) {
 	if f.Parsed() {
 		t.Error("f.Parse() = true before Parse")
 	}
-	boolaFlag := f.BoolP("boola", "a", false, "bool value")
-	boolbFlag := f.BoolP("boolb", "b", false, "bool2 value")
-	boolcFlag := f.BoolP("boolc", "c", false, "bool3 value")
-	booldFlag := f.BoolP("boold", "d", false, "bool4 value")
-	booleFlag := f.BoolS("boole", "e", false, "bool5 value")
-	stringaFlag := f.StringP("stringa", "s", "0", "string value")
-	stringzFlag := f.StringP("stringz", "z", "0", "string value")
+	boolaFlag := f.Bool("boola", false, "bool value", OptShorthand('a'))
+	boolbFlag := f.Bool("boolb", false, "bool2 value", OptShorthand('b'))
+	boolcFlag := f.Bool("boolc", false, "bool3 value", OptShorthand('c'))
+	booldFlag := f.Bool("boold", false, "bool4 value", OptShorthand('d'))
+	booleFlag := f.Bool("boole", false, "bool5 value", OptShorthand('e'))
+	stringaFlag := f.String("stringa", "0", "string value", OptShorthand('s'))
+	stringzFlag := f.String("stringz", "0", "string value", OptShorthand('z'))
 	extra := "interspersed-argument"
 	notaflag := "--i-look-like-a-flag"
 	args := []string{
@@ -620,7 +620,7 @@ func TestShorthandOnly(t *testing.T) {
 	if f.Parsed() {
 		t.Error("f.Parse() = true before Parse")
 	}
-	boolFlag := f.BoolS("bool", "1", false, "bool value")
+	boolFlag := f.Bool("bool", false, "bool value", OptShorthandOnly(), OptShorthand('1'))
 	args := []string{
 		"--bool",
 	}
@@ -640,9 +640,9 @@ func TestShorthandLookup(t *testing.T) {
 	if f.Parsed() {
 		t.Error("f.Parse() = true before Parse")
 	}
-	f.BoolP("boola", "a", false, "bool value")
-	f.BoolP("boolb", "b", false, "bool2 value")
-	f.BoolP("boolö", "ö", false, "bool2 value")
+	f.Bool("boola", false, "bool value", OptShorthand('a'))
+	f.Bool("boolb", false, "bool2 value", OptShorthand('b'))
+	f.Bool("boolö", false, "bool2 value", OptShorthand('ö'))
 	args := []string{
 		"-ab",
 	}
@@ -653,27 +653,21 @@ func TestShorthandLookup(t *testing.T) {
 	if !f.Parsed() {
 		t.Error("f.Parse() = false after Parse")
 	}
-	flag := f.ShorthandLookup("a")
+	flag := f.ShorthandLookup('a')
 	if flag == nil {
-		t.Errorf("f.ShorthandLookup(\"a\") returned nil")
+		t.Errorf("f.ShorthandLookup('a') returned nil")
 	}
 	if flag.Name != "boola" {
-		t.Errorf("f.ShorthandLookup(\"a\") found %q instead of \"boola\"", flag.Name)
+		t.Errorf("f.ShorthandLookup('a') found %q instead of \"boola\"", flag.Name)
 	}
-	flag = f.ShorthandLookup("")
+	flag = f.ShorthandLookup('d')
 	if flag != nil {
-		t.Errorf("f.ShorthandLookup(\"\") did not return nil")
+		t.Errorf("f.ShorthandLookup('d') did not return nil")
 	}
-	flag = f.ShorthandLookup("ö")
+	flag = f.ShorthandLookup('ö')
 	if flag.Name != "boolö" {
-		t.Errorf("f.ShorthandLookup(\"ö\") found %q instead of \"boolö\"", flag.Name)
+		t.Errorf("f.ShorthandLookup('ö') found %q instead of \"boolö\"", flag.Name)
 	}
-	defer func() {
-		recover()
-	}()
-	f.ShorthandLookup("ab")
-	// should NEVER get here. lookup should panic. defer'd func should recover it.
-	t.Errorf("f.ShorthandLookup(\"ab\") did not panic")
 }
 
 func TestParse(t *testing.T) {
@@ -939,8 +933,8 @@ func (f *flagVar) Type() string {
 func TestGroups(t *testing.T) {
 	var fs FlagSet
 	fs.Init("test", ContinueOnError)
-	fs.StringP("string1", "s", "some", "string1 usage")
-	fs.BoolP("bool1", "b", false, "bool1 usage")
+	fs.String("string1", "some", "string1 usage", OptShorthand('s'))
+	fs.Bool("bool1", false, "bool1 usage", OptShorthand('b'))
 
 	fs.String("string2", "some", "string2 usage in group1")
 	fs.Lookup("string2").Group = "group1"
@@ -1007,7 +1001,7 @@ func TestUserDefined(t *testing.T) {
 	var flags FlagSet
 	flags.Init("test", ContinueOnError)
 	var v flagVar
-	flags.VarP(&v, "v", "v", "usage")
+	flags.Var(&v, "v", "usage", OptShorthand('v'))
 	if err := flags.Parse([]string{"--v=1", "-v2", "-v", "3"}); err != nil {
 		t.Error(err)
 	}
@@ -1172,7 +1166,7 @@ func TestHelp(t *testing.T) {
 
 	// If we define a help flag, that should override.
 	var help bool
-	fs.BoolVarP(&help, "help", "h", false, "help flag")
+	fs.BoolVar(&help, "help", false, "help flag", OptShorthand('h'))
 	err = fs.Parse([]string{"--help"})
 	if err != nil {
 		t.Fatal("expected no error for defined --help; got ", err)
@@ -1240,7 +1234,7 @@ func TestNoInterspersed(t *testing.T) {
 
 func TestTermination(t *testing.T) {
 	f := NewFlagSet("termination", ContinueOnError)
-	boolFlag := f.BoolP("bool", "l", false, "bool value")
+	boolFlag := f.Bool("bool", false, "bool value", OptShorthand('l'))
 	if f.Parsed() {
 		t.Error("f.Parse() = true before Parse")
 	}
@@ -1277,8 +1271,7 @@ func TestTermination(t *testing.T) {
 
 func getDeprecatedFlagSet() *FlagSet {
 	f := NewFlagSet("bob", ContinueOnError)
-	f.Bool("badflag", true, "always true")
-	f.MarkDeprecated("badflag", "use --good-flag instead")
+	f.Bool("badflag", true, "always true", OptDeprecated("use --good-flag instead"))
 	return f
 }
 func TestDeprecatedFlagInDocs(t *testing.T) {
@@ -1317,8 +1310,7 @@ func TestUnHiddenDeprecatedFlagInDocs(t *testing.T) {
 func TestDeprecatedFlagShorthandInDocs(t *testing.T) {
 	f := NewFlagSet("bob", ContinueOnError)
 	name := "noshorthandflag"
-	f.BoolP(name, "n", true, "always true")
-	f.MarkShorthandDeprecated("noshorthandflag", fmt.Sprintf("use --%s instead", name))
+	f.Bool(name, true, "always true", OptShorthand('n'), OptShorthandDeprecated(fmt.Sprintf("use --%s instead", name)))
 
 	out := new(bytes.Buffer)
 	f.SetOutput(out)
@@ -1353,9 +1345,8 @@ func parseReturnStderr(t *testing.T, f *FlagSet, args []string) (string, error) 
 
 func TestDeprecatedFlagUsage(t *testing.T) {
 	f := NewFlagSet("bob", ContinueOnError)
-	f.Bool("badflag", true, "always true")
 	usageMsg := "use --good-flag instead"
-	f.MarkDeprecated("badflag", usageMsg)
+	f.Bool("badflag", true, "always true", OptDeprecated(usageMsg))
 
 	args := []string{"--badflag"}
 	out, err := parseReturnStderr(t, f, args)
@@ -1371,9 +1362,8 @@ func TestDeprecatedFlagUsage(t *testing.T) {
 func TestDeprecatedFlagShorthandUsage(t *testing.T) {
 	f := NewFlagSet("bob", ContinueOnError)
 	name := "noshorthandflag"
-	f.BoolP(name, "n", true, "always true")
 	usageMsg := fmt.Sprintf("use --%s instead", name)
-	f.MarkShorthandDeprecated(name, usageMsg)
+	f.Bool(name, true, "always true", OptShorthand('n'), OptShorthandDeprecated(usageMsg))
 
 	args := []string{"-n"}
 	out, err := parseReturnStderr(t, f, args)
@@ -1388,10 +1378,9 @@ func TestDeprecatedFlagShorthandUsage(t *testing.T) {
 
 func TestDeprecatedFlagUsageNormalized(t *testing.T) {
 	f := NewFlagSet("bob", ContinueOnError)
-	f.Bool("bad-double_flag", true, "always true")
-	f.SetNormalizeFunc(wordSepNormalizeFunc)
 	usageMsg := "use --good-flag instead"
-	f.MarkDeprecated("bad_double-flag", usageMsg)
+	f.Bool("bad-double_flag", true, "always true", OptDeprecated(usageMsg))
+	f.SetNormalizeFunc(wordSepNormalizeFunc)
 
 	args := []string{"--bad_double_flag"}
 	out, err := parseReturnStderr(t, f, args)
@@ -1420,8 +1409,7 @@ func TestMultipleNormalizeFlagNameInvocations(t *testing.T) {
 //
 func TestHiddenFlagInUsage(t *testing.T) {
 	f := NewFlagSet("bob", ContinueOnError)
-	f.Bool("secretFlag", true, "shhh")
-	f.MarkHidden("secretFlag")
+	f.Bool("secretFlag", true, "shhh", OptHidden())
 
 	out := new(bytes.Buffer)
 	f.SetOutput(out)
@@ -1435,8 +1423,7 @@ func TestHiddenFlagInUsage(t *testing.T) {
 //
 func TestHiddenFlagUsage(t *testing.T) {
 	f := NewFlagSet("bob", ContinueOnError)
-	f.Bool("secretFlag", true, "shhh")
-	f.MarkHidden("secretFlag")
+	f.Bool("secretFlag", true, "shhh", OptHidden())
 
 	args := []string{"--secretFlag"}
 	out, err := parseReturnStderr(t, f, args)
@@ -1492,7 +1479,7 @@ func TestPrintDefaults(t *testing.T) {
 	fs.SetOutput(&buf)
 	fs.Bool("A", false, "for bootstrapping, allow 'any' type")
 	fs.Bool("Alongflagname", false, "disable bounds checking")
-	fs.BoolP("CCC", "C", true, "a boolean defaulting to true")
+	fs.Bool("CCC", true, "a boolean defaulting to true", OptShorthand('C'))
 	fs.String("D", "", "set relative `path` for local imports")
 	fs.Float64("F", 2.7, "a non-zero `number`")
 	fs.Float64("G", 0, "a float that defaults to zero")
@@ -1507,11 +1494,11 @@ func TestPrintDefaults(t *testing.T) {
 	fs.Lookup("ND1").NoOptDefVal = "bar"
 	fs.Int("ND2", 1234, "a `num` with NoOptDefVal")
 	fs.Lookup("ND2").NoOptDefVal = "4321"
-	fs.IntP("EEE", "E", 4321, "a `num` with NoOptDefVal")
-	fs.ShorthandLookup("E").NoOptDefVal = "1234"
+	fs.Int("EEE", 4321, "a `num` with NoOptDefVal", OptShorthand('E'))
+	fs.ShorthandLookup('E').NoOptDefVal = "1234"
 	fs.StringSlice("StringSlice", []string{}, "string slice with zero default")
 	fs.StringArray("StringArray", []string{}, "string array with zero default")
-	fs.CountP("verbose", "v", "verbosity")
+	fs.Count("verbose", "verbosity", OptShorthand('v'))
 	fs.Int("disableDefault", -1, "A non-zero int with DisablePrintDefault")
 	fs.Lookup("disableDefault").DisablePrintDefault = true
 
@@ -1519,7 +1506,7 @@ func TestPrintDefaults(t *testing.T) {
 	fs.Var(&cv, "custom", "custom Value implementation")
 
 	cv2 := customValue(10)
-	fs.VarP(&cv2, "customP", "", "a VarP with default")
+	fs.Var(&cv2, "customP", "a VarP with default")
 
 	fs.PrintDefaults()
 	got := buf.String()
@@ -1592,7 +1579,7 @@ func TestUnquoteUsage(t *testing.T) {
 
 	// custom type
 	fs.String("flagB", "", "flagB: `ctype2`")
-	fs.Lookup("flagB").CustomUsageType = "foo"
+	fs.Lookup("flagB").UsageType = "foo"
 	want += "      --flagB foo      flagB: ctype2\n"
 	check(want)
 
@@ -1608,7 +1595,7 @@ func TestUnquoteUsage(t *testing.T) {
 
 	// custom type and disable unquoting
 	fs.String("flagD", "", "flagD: `ctype4`")
-	fs.Lookup("flagD").CustomUsageType = "bar"
+	fs.Lookup("flagD").UsageType = "bar"
 	fs.Lookup("flagD").DisableUnquoteUsage = true
 	want += "      --flagD bar      flagD: `ctype4`\n"
 	fs.defaultUsage()
@@ -1625,7 +1612,7 @@ func TestCustomFlagDefValue(t *testing.T) {
 	fs.SetOutput(&buf)
 
 	var cv customValue
-	fs.VarP(&cv, "customP", "", "a VarP with no default")
+	fs.Var(&cv, "customP", "a VarP with no default")
 
 	fs.PrintDefaults()
 	beforeParse := buf.String()

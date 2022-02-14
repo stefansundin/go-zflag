@@ -88,7 +88,7 @@ type Flag struct {
 	Shorthand           rune                // one-letter abbreviated flag
 	ShorthandOnly       bool                // If the user set only the shorthand
 	Usage               string              // help message
-	CustomUsageType     string              // flag type displayed in the help message
+	UsageType           string              // flag type displayed in the help message
 	DisableUnquoteUsage bool                // toggle unquoting and extraction of type from usage
 	DisablePrintDefault bool                // toggle printing of the default value in usage message
 	Value               Value               // value as set
@@ -333,20 +333,42 @@ func (f *FlagSet) Lookup(name string) *Flag {
 	return f.lookup(f.normalizeFlagName(name))
 }
 
-// ShorthandLookup returns the Flag structure of the short handed flag,
+// ShorthandLookup returns the Flag structure of the shorthand flag,
 // returning nil if none exists.
+func (f *FlagSet) ShorthandLookup(name rune) *Flag {
+	if name == 0 {
+		return nil
+	}
+
+	v, ok := f.shorthands[name]
+	if !ok {
+		return nil
+	}
+	return v
+}
+
+// ShorthandLookupStr is the same as ShorthandLookup, but you can look it up through a string.
 // It panics if name contains more than one UTF-8 character.
-func (f *FlagSet) ShorthandLookup(name string) *Flag {
+func (f *FlagSet) ShorthandLookupStr(name string) *Flag {
+	r, err := shorthandStrToRune(name)
+	if err != nil {
+		fmt.Fprintln(f.Output(), err)
+		panic(err)
+	}
+
+	return f.ShorthandLookup(r)
+}
+
+func shorthandStrToRune(name string) (rune, error) {
 	if utf8.RuneCountInString(name) > 1 {
-		msg := fmt.Sprintf("can not look up shorthand which is more than one UTF-8 character: %q", name)
-		fmt.Fprintln(f.Output(), msg)
-		panic(msg)
+		return 0, fmt.Errorf("cannot convert shorthand with more than one UTF-8 character: %q", name)
 	}
 	r, _ := utf8.DecodeRuneInString(name)
 	if r == utf8.RuneError {
-		return nil
+		return 0, nil
 	}
-	return f.shorthands[r]
+
+	return r, nil
 }
 
 // lookup returns the Flag structure of the named flag, returning nil if none exists.
@@ -384,68 +406,22 @@ func (f *FlagSet) ArgsLenAtDash() int {
 	return f.argsLenAtDash
 }
 
-// MarkDeprecated indicated that a flag is deprecated in your program. It will
-// continue to function but will not show up in help or usage messages. Using
-// this flag will also print the given usageMessage.
-func (f *FlagSet) MarkDeprecated(name string, usageMessage string) error {
-	flag := f.Lookup(name)
-	if flag == nil {
-		return NewUnknownFlagError(name)
-	}
-	if usageMessage == "" {
-		return fmt.Errorf("deprecated message for flag %q must be set", name)
-	}
-	flag.Deprecated = usageMessage
-	flag.Hidden = true
-	return nil
-}
-
-// MarkShorthandDeprecated will mark the shorthand of a flag deprecated in your
-// program. It will continue to function but will not show up in help or usage
-// messages. Using this flag will also print the given usageMessage.
-func (f *FlagSet) MarkShorthandDeprecated(name string, usageMessage string) error {
-	flag := f.Lookup(name)
-	if flag == nil {
-		return NewUnknownFlagError(name)
-	}
-	if usageMessage == "" {
-		return fmt.Errorf("deprecated message for flag %q must be set", name)
-	}
-	flag.ShorthandDeprecated = usageMessage
-	return nil
-}
-
-// MarkHidden sets a flag to 'hidden' in your program. It will continue to
-// function but will not show up in help or usage messages.
-func (f *FlagSet) MarkHidden(name string) error {
-	flag := f.Lookup(name)
-	if flag == nil {
-		return NewUnknownFlagError(name)
-	}
-	flag.Hidden = true
-	return nil
-}
-
-// SetGroup assigns a flag to a group.
-func (f *FlagSet) SetGroup(name, group string) error {
-	flag := f.Lookup(name)
-	if flag == nil {
-		return NewUnknownFlagError(name)
-	}
-	flag.Group = group
-	return nil
-}
-
 // Lookup returns the Flag structure of the named command-line flag,
 // returning nil if none exists.
 func Lookup(name string) *Flag {
 	return CommandLine.Lookup(name)
 }
 
-// ShorthandLookup returns the Flag structure of the short handed flag,
+// ShorthandLookup returns the Flag structure of the shorthand flag,
 // returning nil if none exists.
-func ShorthandLookup(name string) *Flag {
+func ShorthandLookup(name rune) *Flag {
 	return CommandLine.ShorthandLookup(name)
+}
+
+// ShorthandLookupStr is the same as ShorthandLookup, but you can look it up through a string.
+// It panics if name contains more than one UTF-8 character.
+func ShorthandLookupStr(name string) *Flag {
+	return CommandLine.ShorthandLookupStr(name)
 }
 
 // Set sets the value of the named flag.
@@ -564,7 +540,7 @@ func (f *Flag) defaultIsZeroValue() bool {
 // If there are no back quotes, the name is an educated guess of the
 // type of the flag's value, or the empty string if the flag is boolean.
 func UnquoteUsage(flag *Flag) (name string, usage string) {
-	name = flag.CustomUsageType
+	name = flag.UsageType
 	usage = flag.Usage
 
 	// Look for a back-quoted name, but avoid the strings package.
@@ -888,43 +864,21 @@ func Args() []string { return CommandLine.args }
 // caller could create a flag that turns a comma-separated string into a slice
 // of strings by giving the slice the methods of Value; in particular, Set would
 // decompose the comma-separated string into the slice.
-func (f *FlagSet) Var(value Value, name string, usage string) {
-	f.VarP(value, name, "", usage)
-}
-
-// VarPF is like VarP, but returns the flag created
-func (f *FlagSet) VarPF(value Value, name, shorthand, usage string) *Flag {
-	short, _ := utf8.DecodeRuneInString(shorthand)
-	if short == utf8.RuneError {
-		short = 0
-	}
-	// Remember the default value as a string; it won't change.
+func (f *FlagSet) Var(value Value, name, usage string, opts ...Opt) *Flag {
 	flag := &Flag{
-		Name:      name,
-		Shorthand: short,
-		Usage:     usage,
-		Value:     value,
-		DefValue:  value.String(),
+		Name:     name,
+		Usage:    usage,
+		Value:    value,
+		DefValue: value.String(),
 	}
+
+	err := applyFlagOptions(flag, opts...)
+	if err != nil {
+		panic(err)
+	}
+
 	f.AddFlag(flag)
 	return flag
-}
-
-// VarP is like Var, but accepts a shorthand letter that can be used after a single dash.
-func (f *FlagSet) VarP(value Value, name, shorthand, usage string) {
-	f.VarPF(value, name, shorthand, usage)
-}
-
-// VarSF is like VarS, but returns the flag created
-func (f *FlagSet) VarSF(value Value, name string, shorthand string, usage string) *Flag {
-	flag := f.VarPF(value, name, shorthand, usage)
-	flag.ShorthandOnly = true
-	return flag
-}
-
-// VarS is like Var, but accepts a shorthand letter to be used after a single dash, alone.
-func (f *FlagSet) VarS(value Value, name string, shorthand string, usage string) {
-	f.VarSF(value, name, shorthand, usage)
 }
 
 // AddFlag will add the flag to the FlagSet
@@ -979,18 +933,8 @@ func (f *FlagSet) AddFlagSet(newSet *FlagSet) {
 // caller could create a flag that turns a comma-separated string into a slice
 // of strings by giving the slice the methods of Value; in particular, Set would
 // decompose the comma-separated string into the slice.
-func Var(value Value, name string, usage string) {
-	CommandLine.VarP(value, name, "", usage)
-}
-
-// VarP is like Var, but accepts a shorthand letter that can be used after a single dash.
-func VarP(value Value, name, shorthand, usage string) {
-	CommandLine.VarP(value, name, shorthand, usage)
-}
-
-// VarS is like Var, but accepts a shorthand letter that can be used after a single dash, alone.
-func VarS(value Value, name, shorthand, usage string) {
-	CommandLine.VarS(value, name, shorthand, usage)
+func Var(value Value, name, usage string, opts ...Opt) *Flag {
+	return CommandLine.Var(value, name, usage, opts...)
 }
 
 // failf prints to standard error a formatted error and usage message and

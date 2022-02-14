@@ -90,74 +90,32 @@ func (f *FlagSet) MustGetStringToInt(name string) map[string]int {
 	return val
 }
 
-// StringToIntVar defines a string flag with specified name, default value, and usage string.
-// The argument p points to a map[string]int variable in which to store the values of the multiple flags.
-// The value of each argument will not try to be separated by comma
-func (f *FlagSet) StringToIntVar(p *map[string]int, name string, value map[string]int, usage string) {
-	f.StringToIntVarP(p, name, "", value, usage)
+// StringToIntVar defines a map[string]int flag with specified name, default value, and usage string.
+// The argument p points to a map[string]int variable in which to store the values of multiple flags.
+// The values will be separated on comma. Items can be quoted, or escape commas to avoid splitting.
+func (f *FlagSet) StringToIntVar(p *map[string]int, name string, value map[string]int, usage string, opts ...Opt) {
+	f.Var(newStringToIntValue(value, p), name, usage, opts...)
 }
 
-// StringToIntVarP is like StringToIntVar, but accepts a shorthand letter that can be used after a single dash.
-func (f *FlagSet) StringToIntVarP(p *map[string]int, name, shorthand string, value map[string]int, usage string) {
-	f.VarP(newStringToIntValue(value, p), name, shorthand, usage)
+// StringToIntVar defines a map[string]int flag with specified name, default value, and usage string.
+// The argument p points to a map[string]int variable in which to store the values of multiple flags.
+// The values will be separated on comma. Items can be quoted, or escape commas to avoid splitting.
+func StringToIntVar(p *map[string]int, name string, value map[string]int, usage string, opts ...Opt) {
+	CommandLine.StringToIntVar(p, name, value, usage, opts...)
 }
 
-// StringToIntVarS is like StringToIntVar, but accepts a shorthand letter that can be used after a single dash, alone.
-func (f *FlagSet) StringToIntVarS(p *map[string]int, name, shorthand string, value map[string]int, usage string) {
-	f.VarS(newStringToIntValue(value, p), name, shorthand, usage)
-}
-
-// StringToIntVar defines a string flag with specified name, default value, and usage string.
-// The argument p points to a map[string]int variable in which to store the value of the flag.
-// The value of each argument will not try to be separated by comma
-func StringToIntVar(p *map[string]int, name string, value map[string]int, usage string) {
-	CommandLine.StringToIntVar(p, name, value, usage)
-}
-
-// StringToIntVarP is like StringToIntVar, but accepts a shorthand letter that can be used after a single dash.
-func StringToIntVarP(p *map[string]int, name, shorthand string, value map[string]int, usage string) {
-	CommandLine.StringToIntVarP(p, name, shorthand, value, usage)
-}
-
-// StringToIntVarS is like StringToIntVar, but accepts a shorthand letter that can be used after a single dash, alone.
-func StringToIntVarS(p *map[string]int, name, shorthand string, value map[string]int, usage string) {
-	CommandLine.StringToIntVarS(p, name, shorthand, value, usage)
-}
-
-// StringToInt defines a string flag with specified name, default value, and usage string.
-// The return value is the address of a map[string]int variable that stores the value of the flag.
-// The value of each argument will not try to be separated by comma
-func (f *FlagSet) StringToInt(name string, value map[string]int, usage string) *map[string]int {
-	return f.StringToIntP(name, "", value, usage)
-}
-
-// StringToIntP is like StringToInt, but accepts a shorthand letter that can be used after a single dash.
-func (f *FlagSet) StringToIntP(name, shorthand string, value map[string]int, usage string) *map[string]int {
-	p := map[string]int{}
-	f.StringToIntVarP(&p, name, shorthand, value, usage)
+// StringToInt defines a map[string]int flag with specified name, default value, and usage string.
+// The return value is the address of a map[string]int variable that stores the values of multiple flags.
+// The values will be separated on comma. Items can be quoted, or escape commas to avoid splitting.
+func (f *FlagSet) StringToInt(name string, value map[string]int, usage string, opts ...Opt) *map[string]int {
+	var p map[string]int
+	f.StringToIntVar(&p, name, value, usage, opts...)
 	return &p
 }
 
-// StringToIntS is like StringToInt, but accepts a shorthand letter that can be used after a single dash, alone.
-func (f *FlagSet) StringToIntS(name, shorthand string, value map[string]int, usage string) *map[string]int {
-	p := map[string]int{}
-	f.StringToIntVarS(&p, name, shorthand, value, usage)
-	return &p
-}
-
-// StringToInt defines a string flag with specified name, default value, and usage string.
-// The return value is the address of a map[string]int variable that stores the value of the flag.
-// The value of each argument will not try to be separated by comma
-func StringToInt(name string, value map[string]int, usage string) *map[string]int {
-	return CommandLine.StringToInt(name, value, usage)
-}
-
-// StringToIntP is like StringToInt, but accepts a shorthand letter that can be used after a single dash.
-func StringToIntP(name, shorthand string, value map[string]int, usage string) *map[string]int {
-	return CommandLine.StringToIntP(name, shorthand, value, usage)
-}
-
-// StringToIntS is like StringToInt, but accepts a shorthand letter that can be used after a single dash, alone.
-func StringToIntS(name, shorthand string, value map[string]int, usage string) *map[string]int {
-	return CommandLine.StringToIntS(name, shorthand, value, usage)
+// StringToInt defines a map[string]int flag with specified name, default value, and usage string.
+// The return value is the address of a map[string]int variable that stores the values of multiple flags.
+// The values will be separated on comma. Items can be quoted, or escape commas to avoid splitting.
+func StringToInt(name string, value map[string]int, usage string, opts ...Opt) *map[string]int {
+	return CommandLine.StringToInt(name, value, usage, opts...)
 }

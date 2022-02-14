@@ -7,9 +7,9 @@ import "fmt"
 
 func ExampleShorthandLookup() {
 	name := "verbose"
-	short := name[:1]
+	short := 'v'
 
-	BoolP(name, short, false, "verbose output")
+	Bool(name, false, "verbose output", OptShorthand(short))
 
 	// len(short) must be == 1
 	flag := ShorthandLookup(short)
@@ -19,10 +19,10 @@ func ExampleShorthandLookup() {
 
 func ExampleFlagSet_ShorthandLookup() {
 	name := "verbose"
-	short := name[:1]
+	short := 'v'
 
 	fs := NewFlagSet("Example", ContinueOnError)
-	fs.BoolP(name, short, false, "verbose output")
+	fs.Bool(name, false, "verbose output", OptShorthand(short))
 
 	// len(short) must be == 1
 	flag := fs.ShorthandLookup(short)

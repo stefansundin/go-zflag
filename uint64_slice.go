@@ -114,70 +114,28 @@ func (f *FlagSet) MustGetUint64Slice(name string) []uint64 {
 	return val
 }
 
-// Uint64SliceVar defines a uint64Slice flag with specified name, default value, and usage string.
-// The argument p pouints to a []uint64 variable in which to store the value of the flag.
-func (f *FlagSet) Uint64SliceVar(p *[]uint64, name string, value []uint64, usage string) {
-	f.Uint64SliceVarP(p, name, "", value, usage)
+// Uint64SliceVar defines a []uint64 flag with specified name, default value, and usage string.
+// The argument p points to a []uint64 variable in which to store the value of the flag.
+func (f *FlagSet) Uint64SliceVar(p *[]uint64, name string, value []uint64, usage string, opts ...Opt) {
+	f.Var(newUint64SliceValue(value, p), name, usage, opts...)
 }
 
-// Uint64SliceVarP is like Uint64SliceVar, but accepts a shorthand letter that can be used after a single dash.
-func (f *FlagSet) Uint64SliceVarP(p *[]uint64, name, shorthand string, value []uint64, usage string) {
-	f.VarP(newUint64SliceValue(value, p), name, shorthand, usage)
-}
-
-// Uint64SliceVarS is like Uint64SliceVar, but accepts a shorthand letter that can be used after a single dash, alone.
-func (f *FlagSet) Uint64SliceVarS(p *[]uint64, name, shorthand string, value []uint64, usage string) {
-	f.VarS(newUint64SliceValue(value, p), name, shorthand, usage)
-}
-
-// Uint64SliceVar defines a uint64[] flag with specified name, default value, and usage string.
-// The argument p pouints to a uint64[] variable in which to store the value of the flag.
-func Uint64SliceVar(p *[]uint64, name string, value []uint64, usage string) {
-	CommandLine.Uint64SliceVar(p, name, value, usage)
-}
-
-// Uint64SliceVarP is like Uint64SliceVar, but accepts a shorthand letter that can be used after a single dash.
-func Uint64SliceVarP(p *[]uint64, name, shorthand string, value []uint64, usage string) {
-	CommandLine.Uint64SliceVarP(p, name, shorthand, value, usage)
-}
-
-// Uint64SliceVarS is like Uint64SliceVar, but accepts a shorthand letter that can be used after a single dash, alone.
-func Uint64SliceVarS(p *[]uint64, name, shorthand string, value []uint64, usage string) {
-	CommandLine.Uint64SliceVarS(p, name, shorthand, value, usage)
+// Uint64SliceVar defines a []uint64 flag with specified name, default value, and usage string.
+// The argument p points to a []uint64 variable in which to store the value of the flag.
+func Uint64SliceVar(p *[]uint64, name string, value []uint64, usage string, opts ...Opt) {
+	CommandLine.Uint64SliceVar(p, name, value, usage, opts...)
 }
 
 // Uint64Slice defines a []uint64 flag with specified name, default value, and usage string.
 // The return value is the address of a []uint64 variable that stores the value of the flag.
-func (f *FlagSet) Uint64Slice(name string, value []uint64, usage string) *[]uint64 {
-	return f.Uint64SliceP(name, "", value, usage)
-}
-
-// Uint64SliceP is like Uint64Slice, but accepts a shorthand letter that can be used after a single dash.
-func (f *FlagSet) Uint64SliceP(name, shorthand string, value []uint64, usage string) *[]uint64 {
-	p := []uint64{}
-	f.Uint64SliceVarP(&p, name, shorthand, value, usage)
-	return &p
-}
-
-// Uint64SliceS is like Uint64Slice, but accepts a shorthand letter that can be used after a single dash, alone.
-func (f *FlagSet) Uint64SliceS(name, shorthand string, value []uint64, usage string) *[]uint64 {
-	p := []uint64{}
-	f.Uint64SliceVarS(&p, name, shorthand, value, usage)
+func (f *FlagSet) Uint64Slice(name string, value []uint64, usage string, opts ...Opt) *[]uint64 {
+	var p []uint64
+	f.Uint64SliceVar(&p, name, value, usage, opts...)
 	return &p
 }
 
 // Uint64Slice defines a []uint64 flag with specified name, default value, and usage string.
 // The return value is the address of a []uint64 variable that stores the value of the flag.
-func Uint64Slice(name string, value []uint64, usage string) *[]uint64 {
-	return CommandLine.Uint64Slice(name, value, usage)
-}
-
-// Uint64SliceP is like Uint64Slice, but accepts a shorthand letter that can be used after a single dash.
-func Uint64SliceP(name, shorthand string, value []uint64, usage string) *[]uint64 {
-	return CommandLine.Uint64SliceP(name, shorthand, value, usage)
-}
-
-// Uint64SliceS is like Uint64Slice, but accepts a shorthand letter that can be used after a single dash, alone.
-func Uint64SliceS(name, shorthand string, value []uint64, usage string) *[]uint64 {
-	return CommandLine.Uint64SliceS(name, shorthand, value, usage)
+func Uint64Slice(name string, value []uint64, usage string, opts ...Opt) *[]uint64 {
+	return CommandLine.Uint64Slice(name, value, usage, opts...)
 }

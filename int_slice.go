@@ -106,70 +106,28 @@ func (f *FlagSet) MustGetIntSlice(name string) []int {
 	return val
 }
 
-// IntSliceVar defines a intSlice flag with specified name, default value, and usage string.
+// IntSliceVar defines a []int flag with specified name, default value, and usage string.
 // The argument p points to a []int variable in which to store the value of the flag.
-func (f *FlagSet) IntSliceVar(p *[]int, name string, value []int, usage string) {
-	f.IntSliceVarP(p, name, "", value, usage)
+func (f *FlagSet) IntSliceVar(p *[]int, name string, value []int, usage string, opts ...Opt) {
+	f.Var(newIntSliceValue(value, p), name, usage, opts...)
 }
 
-// IntSliceVarP is like IntSliceVar, but accepts a shorthand letter that can be used after a single dash.
-func (f *FlagSet) IntSliceVarP(p *[]int, name, shorthand string, value []int, usage string) {
-	f.VarP(newIntSliceValue(value, p), name, shorthand, usage)
-}
-
-// IntSliceVarS is like IntSliceVar, but accepts a shorthand letter that can be used after a single dash, alone.
-func (f *FlagSet) IntSliceVarS(p *[]int, name, shorthand string, value []int, usage string) {
-	f.VarS(newIntSliceValue(value, p), name, shorthand, usage)
-}
-
-// IntSliceVar defines a int[] flag with specified name, default value, and usage string.
-// The argument p points to a int[] variable in which to store the value of the flag.
-func IntSliceVar(p *[]int, name string, value []int, usage string) {
-	CommandLine.IntSliceVar(p, name, value, usage)
-}
-
-// IntSliceVarP is like IntSliceVar, but accepts a shorthand letter that can be used after a single dash.
-func IntSliceVarP(p *[]int, name, shorthand string, value []int, usage string) {
-	CommandLine.IntSliceVarP(p, name, shorthand, value, usage)
-}
-
-// IntSliceVarS is like IntSliceVar, but accepts a shorthand letter that can be used after a single dash, alone.
-func IntSliceVarS(p *[]int, name, shorthand string, value []int, usage string) {
-	CommandLine.IntSliceVarS(p, name, shorthand, value, usage)
+// IntSliceVar defines a []int flag with specified name, default value, and usage string.
+// The argument p points to a []int variable in which to store the value of the flag.
+func IntSliceVar(p *[]int, name string, value []int, usage string, opts ...Opt) {
+	CommandLine.IntSliceVar(p, name, value, usage, opts...)
 }
 
 // IntSlice defines a []int flag with specified name, default value, and usage string.
 // The return value is the address of a []int variable that stores the value of the flag.
-func (f *FlagSet) IntSlice(name string, value []int, usage string) *[]int {
-	return f.IntSliceP(name, "", value, usage)
-}
-
-// IntSliceP is like IntSlice, but accepts a shorthand letter that can be used after a single dash.
-func (f *FlagSet) IntSliceP(name, shorthand string, value []int, usage string) *[]int {
-	p := []int{}
-	f.IntSliceVarP(&p, name, shorthand, value, usage)
-	return &p
-}
-
-// IntSliceS is like IntSlice, but accepts a shorthand letter that can be used after a single dash, alone.
-func (f *FlagSet) IntSliceS(name, shorthand string, value []int, usage string) *[]int {
-	p := []int{}
-	f.IntSliceVarS(&p, name, shorthand, value, usage)
+func (f *FlagSet) IntSlice(name string, value []int, usage string, opts ...Opt) *[]int {
+	var p []int
+	f.IntSliceVar(&p, name, value, usage, opts...)
 	return &p
 }
 
 // IntSlice defines a []int flag with specified name, default value, and usage string.
 // The return value is the address of a []int variable that stores the value of the flag.
-func IntSlice(name string, value []int, usage string) *[]int {
-	return CommandLine.IntSlice(name, value, usage)
-}
-
-// IntSliceP is like IntSlice, but accepts a shorthand letter that can be used after a single dash.
-func IntSliceP(name, shorthand string, value []int, usage string) *[]int {
-	return CommandLine.IntSliceP(name, shorthand, value, usage)
-}
-
-// IntSliceS is like IntSlice, but accepts a shorthand letter that can be used after a single dash, alone.
-func IntSliceS(name, shorthand string, value []int, usage string) *[]int {
-	return CommandLine.IntSliceS(name, shorthand, value, usage)
+func IntSlice(name string, value []int, usage string, opts ...Opt) *[]int {
+	return CommandLine.IntSlice(name, value, usage, opts...)
 }

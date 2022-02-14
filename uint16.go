@@ -47,70 +47,28 @@ func (f *FlagSet) MustGetUint16(name string) uint16 {
 	return val
 }
 
-// Uint16Var defines a uint flag with specified name, default value, and usage string.
-// The argument p points to a uint variable in which to store the value of the flag.
-func (f *FlagSet) Uint16Var(p *uint16, name string, value uint16, usage string) {
-	f.Uint16VarP(p, name, "", value, usage)
+// Uint16Var defines an uint16 flag with specified name, default value, and usage string.
+// The argument p points to an uint16 variable in which to store the value of the flag.
+func (f *FlagSet) Uint16Var(p *uint16, name string, value uint16, usage string, opts ...Opt) {
+	f.Var(newUint16Value(value, p), name, usage, opts...)
 }
 
-// Uint16VarP is like Uint16Var, but accepts a shorthand letter that can be used after a single dash.
-func (f *FlagSet) Uint16VarP(p *uint16, name, shorthand string, value uint16, usage string) {
-	f.VarP(newUint16Value(value, p), name, shorthand, usage)
+// Uint16Var defines an uint16 flag with specified name, default value, and usage string.
+// The argument p points to an uint16 variable in which to store the value of the flag.
+func Uint16Var(p *uint16, name string, value uint16, usage string, opts ...Opt) {
+	CommandLine.Uint16Var(p, name, value, usage, opts...)
 }
 
-// Uint16VarS is like Uint16Var, but accepts a shorthand letter that can be used after a single dash, alone.
-func (f *FlagSet) Uint16VarS(p *uint16, name, shorthand string, value uint16, usage string) {
-	f.VarS(newUint16Value(value, p), name, shorthand, usage)
+// Uint16 defines an uint16 flag with specified name, default value, and usage string.
+// The return value is the address of an uint16 variable that stores the value of the flag.
+func (f *FlagSet) Uint16(name string, value uint16, usage string, opts ...Opt) *uint16 {
+	var p uint16
+	f.Uint16Var(&p, name, value, usage, opts...)
+	return &p
 }
 
-// Uint16Var defines a uint flag with specified name, default value, and usage string.
-// The argument p points to a uint  variable in which to store the value of the flag.
-func Uint16Var(p *uint16, name string, value uint16, usage string) {
-	CommandLine.Uint16Var(p, name, value, usage)
-}
-
-// Uint16VarP is like Uint16Var, but accepts a shorthand letter that can be used after a single dash.
-func Uint16VarP(p *uint16, name, shorthand string, value uint16, usage string) {
-	CommandLine.Uint16VarP(p, name, shorthand, value, usage)
-}
-
-// Uint16VarS is like Uint16Var, but accepts a shorthand letter that can be used after a single dash, alone.
-func Uint16VarS(p *uint16, name, shorthand string, value uint16, usage string) {
-	CommandLine.Uint16VarS(p, name, shorthand, value, usage)
-}
-
-// Uint16 defines a uint flag with specified name, default value, and usage string.
-// The return value is the address of a uint  variable that stores the value of the flag.
-func (f *FlagSet) Uint16(name string, value uint16, usage string) *uint16 {
-	return f.Uint16P(name, "", value, usage)
-}
-
-// Uint16P is like Uint16, but accepts a shorthand letter that can be used after a single dash.
-func (f *FlagSet) Uint16P(name, shorthand string, value uint16, usage string) *uint16 {
-	p := new(uint16)
-	f.Uint16VarP(p, name, shorthand, value, usage)
-	return p
-}
-
-// Uint16S is like Uint16, but accepts a shorthand letter that can be used after a single dash, alone.
-func (f *FlagSet) Uint16S(name, shorthand string, value uint16, usage string) *uint16 {
-	p := new(uint16)
-	f.Uint16VarS(p, name, shorthand, value, usage)
-	return p
-}
-
-// Uint16 defines a uint flag with specified name, default value, and usage string.
-// The return value is the address of a uint  variable that stores the value of the flag.
-func Uint16(name string, value uint16, usage string) *uint16 {
-	return CommandLine.Uint16(name, value, usage)
-}
-
-// Uint16P is like Uint16, but accepts a shorthand letter that can be used after a single dash.
-func Uint16P(name, shorthand string, value uint16, usage string) *uint16 {
-	return CommandLine.Uint16P(name, shorthand, value, usage)
-}
-
-// Uint16S is like Uint16, but accepts a shorthand letter that can be used after a single dash, alone.
-func Uint16S(name, shorthand string, value uint16, usage string) *uint16 {
-	return CommandLine.Uint16S(name, shorthand, value, usage)
+// Uint16 defines an uint16 flag with specified name, default value, and usage string.
+// The return value is the address of an uint16 variable that stores the value of the flag.
+func Uint16(name string, value uint16, usage string, opts ...Opt) *uint16 {
+	return CommandLine.Uint16(name, value, usage, opts...)
 }

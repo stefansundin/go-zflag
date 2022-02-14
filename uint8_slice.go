@@ -120,70 +120,28 @@ func (f *FlagSet) MustGetUint8Slice(name string) []uint8 {
 	return val
 }
 
-// Uint8SliceVar defines a uint8Slice flag with specified name, default value, and usage string.
-// The argument p pouints to a []uint8 variable in which to store the value of the flag.
-func (f *FlagSet) Uint8SliceVar(p *[]uint8, name string, value []uint8, usage string) {
-	f.Uint8SliceVarP(p, name, "", value, usage)
+// Uint8SliceVar defines a []uint8 flag with specified name, default value, and usage string.
+// The argument p points to a []uint8 variable in which to store the value of the flag.
+func (f *FlagSet) Uint8SliceVar(p *[]uint8, name string, value []uint8, usage string, opts ...Opt) {
+	f.Var(newUint8SliceValue(value, p), name, usage, opts...)
 }
 
-// Uint8SliceVarP is like Uint8SliceVar, but accepts a shorthand letter that can be used after a single dash.
-func (f *FlagSet) Uint8SliceVarP(p *[]uint8, name, shorthand string, value []uint8, usage string) {
-	f.VarP(newUint8SliceValue(value, p), name, shorthand, usage)
-}
-
-// Uint8SliceVarS is like Uint8SliceVar, but accepts a shorthand letter that can be used after a single dash, alone.
-func (f *FlagSet) Uint8SliceVarS(p *[]uint8, name, shorthand string, value []uint8, usage string) {
-	f.VarS(newUint8SliceValue(value, p), name, shorthand, usage)
-}
-
-// Uint8SliceVar defines a uint8[] flag with specified name, default value, and usage string.
-// The argument p pouints to a uint8[] variable in which to store the value of the flag.
-func Uint8SliceVar(p *[]uint8, name string, value []uint8, usage string) {
-	CommandLine.Uint8SliceVar(p, name, value, usage)
-}
-
-// Uint8SliceVarP is like Uint8SliceVar, but accepts a shorthand letter that can be used after a single dash.
-func Uint8SliceVarP(p *[]uint8, name, shorthand string, value []uint8, usage string) {
-	CommandLine.Uint8SliceVarP(p, name, shorthand, value, usage)
-}
-
-// Uint8SliceVarS is like Uint8SliceVar, but accepts a shorthand letter that can be used after a single dash, alone.
-func Uint8SliceVarS(p *[]uint8, name, shorthand string, value []uint8, usage string) {
-	CommandLine.Uint8SliceVarS(p, name, shorthand, value, usage)
+// Uint8SliceVar defines a []uint8 flag with specified name, default value, and usage string.
+// The argument p points to a []uint8 variable in which to store the value of the flag.
+func Uint8SliceVar(p *[]uint8, name string, value []uint8, usage string, opts ...Opt) {
+	CommandLine.Uint8SliceVar(p, name, value, usage, opts...)
 }
 
 // Uint8Slice defines a []uint8 flag with specified name, default value, and usage string.
 // The return value is the address of a []uint8 variable that stores the value of the flag.
-func (f *FlagSet) Uint8Slice(name string, value []uint8, usage string) *[]uint8 {
-	return f.Uint8SliceP(name, "", value, usage)
-}
-
-// Uint8SliceP is like Uint8Slice, but accepts a shorthand letter that can be used after a single dash.
-func (f *FlagSet) Uint8SliceP(name, shorthand string, value []uint8, usage string) *[]uint8 {
-	p := []uint8{}
-	f.Uint8SliceVarP(&p, name, shorthand, value, usage)
-	return &p
-}
-
-// Uint8SliceS is like Uint8Slice, but accepts a shorthand letter that can be used after a single dash, alone.
-func (f *FlagSet) Uint8SliceS(name, shorthand string, value []uint8, usage string) *[]uint8 {
-	p := []uint8{}
-	f.Uint8SliceVarS(&p, name, shorthand, value, usage)
+func (f *FlagSet) Uint8Slice(name string, value []uint8, usage string, opts ...Opt) *[]uint8 {
+	var p []uint8
+	f.Uint8SliceVar(&p, name, value, usage, opts...)
 	return &p
 }
 
 // Uint8Slice defines a []uint8 flag with specified name, default value, and usage string.
 // The return value is the address of a []uint8 variable that stores the value of the flag.
-func Uint8Slice(name string, value []uint8, usage string) *[]uint8 {
-	return CommandLine.Uint8Slice(name, value, usage)
-}
-
-// Uint8SliceP is like Uint8Slice, but accepts a shorthand letter that can be used after a single dash.
-func Uint8SliceP(name, shorthand string, value []uint8, usage string) *[]uint8 {
-	return CommandLine.Uint8SliceP(name, shorthand, value, usage)
-}
-
-// Uint8SliceS is like Uint8Slice, but accepts a shorthand letter that can be used after a single dash, alone.
-func Uint8SliceS(name, shorthand string, value []uint8, usage string) *[]uint8 {
-	return CommandLine.Uint8SliceS(name, shorthand, value, usage)
+func Uint8Slice(name string, value []uint8, usage string, opts ...Opt) *[]uint8 {
+	return CommandLine.Uint8Slice(name, value, usage, opts...)
 }

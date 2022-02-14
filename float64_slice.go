@@ -116,68 +116,26 @@ func (f *FlagSet) MustGetFloat64Slice(name string) []float64 {
 
 // Float64SliceVar defines a float64Slice flag with specified name, default value, and usage string.
 // The argument p points to a []float64 variable in which to store the value of the flag.
-func (f *FlagSet) Float64SliceVar(p *[]float64, name string, value []float64, usage string) {
-	f.Float64SliceVarP(p, name, "", value, usage)
-}
-
-// Float64SliceVarP is like Float64SliceVar, but accepts a shorthand letter that can be used after a single dash.
-func (f *FlagSet) Float64SliceVarP(p *[]float64, name, shorthand string, value []float64, usage string) {
-	f.VarP(newFloat64SliceValue(value, p), name, shorthand, usage)
-}
-
-// Float64SliceVarS is like Float64SliceVar, but accepts a shorthand letter that can be used after a single dash, alone.
-func (f *FlagSet) Float64SliceVarS(p *[]float64, name, shorthand string, value []float64, usage string) {
-	f.VarS(newFloat64SliceValue(value, p), name, shorthand, usage)
+func (f *FlagSet) Float64SliceVar(p *[]float64, name string, value []float64, usage string, opts ...Opt) {
+	f.Var(newFloat64SliceValue(value, p), name, usage, opts...)
 }
 
 // Float64SliceVar defines a float64[] flag with specified name, default value, and usage string.
 // The argument p points to a float64[] variable in which to store the value of the flag.
-func Float64SliceVar(p *[]float64, name string, value []float64, usage string) {
-	CommandLine.Float64SliceVar(p, name, value, usage)
-}
-
-// Float64SliceVarP is like Float64SliceVar, but accepts a shorthand letter that can be used after a single dash.
-func Float64SliceVarP(p *[]float64, name, shorthand string, value []float64, usage string) {
-	CommandLine.Float64SliceVarP(p, name, shorthand, value, usage)
-}
-
-// Float64SliceVarS is like Float64SliceVar, but accepts a shorthand letter that can be used after a single dash, alone.
-func Float64SliceVarS(p *[]float64, name, shorthand string, value []float64, usage string) {
-	CommandLine.Float64SliceVarS(p, name, shorthand, value, usage)
+func Float64SliceVar(p *[]float64, name string, value []float64, usage string, opts ...Opt) {
+	CommandLine.Float64SliceVar(p, name, value, usage, opts...)
 }
 
 // Float64Slice defines a []float64 flag with specified name, default value, and usage string.
 // The return value is the address of a []float64 variable that stores the value of the flag.
-func (f *FlagSet) Float64Slice(name string, value []float64, usage string) *[]float64 {
-	return f.Float64SliceP(name, "", value, usage)
-}
-
-// Float64SliceP is like Float64Slice, but accepts a shorthand letter that can be used after a single dash.
-func (f *FlagSet) Float64SliceP(name, shorthand string, value []float64, usage string) *[]float64 {
-	p := []float64{}
-	f.Float64SliceVarP(&p, name, shorthand, value, usage)
-	return &p
-}
-
-// Float64SliceS is like Float64Slice, but accepts a shorthand letter that can be used after a single dash, alone.
-func (f *FlagSet) Float64SliceS(name, shorthand string, value []float64, usage string) *[]float64 {
-	p := []float64{}
-	f.Float64SliceVarS(&p, name, shorthand, value, usage)
+func (f *FlagSet) Float64Slice(name string, value []float64, usage string, opts ...Opt) *[]float64 {
+	var p []float64
+	f.Float64SliceVar(&p, name, value, usage, opts...)
 	return &p
 }
 
 // Float64Slice defines a []float64 flag with specified name, default value, and usage string.
 // The return value is the address of a []float64 variable that stores the value of the flag.
-func Float64Slice(name string, value []float64, usage string) *[]float64 {
-	return CommandLine.Float64Slice(name, value, usage)
-}
-
-// Float64SliceP is like Float64Slice, but accepts a shorthand letter that can be used after a single dash.
-func Float64SliceP(name, shorthand string, value []float64, usage string) *[]float64 {
-	return CommandLine.Float64SliceP(name, shorthand, value, usage)
-}
-
-// Float64SliceS is like Float64Slice, but accepts a shorthand letter that can be used after a single dash, alone.
-func Float64SliceS(name, shorthand string, value []float64, usage string) *[]float64 {
-	return CommandLine.Float64SliceS(name, shorthand, value, usage)
+func Float64Slice(name string, value []float64, usage string, opts ...Opt) *[]float64 {
+	return CommandLine.Float64Slice(name, value, usage, opts...)
 }

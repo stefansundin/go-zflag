@@ -56,70 +56,28 @@ func (f *FlagSet) MustGetIPNet(name string) net.IPNet {
 	return val
 }
 
-// IPNetVar defines an net.IPNet flag with specified name, default value, and usage string.
-// The argument p points to an net.IPNet variable in which to store the value of the flag.
-func (f *FlagSet) IPNetVar(p *net.IPNet, name string, value net.IPNet, usage string) {
-	f.IPNetVarP(p, name, "", value, usage)
+// IPNetVar defines a net.IPNet flag with specified name, default value, and usage string.
+// The argument p points to a net.IPNet variable in which to store the value of the flag.
+func (f *FlagSet) IPNetVar(p *net.IPNet, name string, value net.IPNet, usage string, opts ...Opt) {
+	f.Var(newIPNetValue(value, p), name, usage, opts...)
 }
 
-// IPNetVarP is like IPNetVar, but accepts a shorthand letter that can be used after a single dash.
-func (f *FlagSet) IPNetVarP(p *net.IPNet, name, shorthand string, value net.IPNet, usage string) {
-	f.VarP(newIPNetValue(value, p), name, shorthand, usage)
+// IPNetVar defines a net.IPNet flag with specified name, default value, and usage string.
+// The argument p points to a net.IPNet variable in which to store the value of the flag.
+func IPNetVar(p *net.IPNet, name string, value net.IPNet, usage string, opts ...Opt) {
+	CommandLine.IPNetVar(p, name, value, usage, opts...)
 }
 
-// IPNetVarS is like IPNetVar, but accepts a shorthand letter that can be used after a single , alone, alone.
-func (f *FlagSet) IPNetVarS(p *net.IPNet, name, shorthand string, value net.IPNet, usage string) {
-	f.VarS(newIPNetValue(value, p), name, shorthand, usage)
+// IPNet defines a net.IPNet flag with specified name, default value, and usage string.
+// The return value is the address of a net.IPNet variable that stores the value of the flag.
+func (f *FlagSet) IPNet(name string, value net.IPNet, usage string, opts ...Opt) *net.IPNet {
+	var p net.IPNet
+	f.IPNetVar(&p, name, value, usage, opts...)
+	return &p
 }
 
-// IPNetVar defines an net.IPNet flag with specified name, default value, and usage string.
-// The argument p points to an net.IPNet variable in which to store the value of the flag.
-func IPNetVar(p *net.IPNet, name string, value net.IPNet, usage string) {
-	CommandLine.IPNetVar(p, name, value, usage)
-}
-
-// IPNetVarP is like IPNetVar, but accepts a shorthand letter that can be used after a single dash.
-func IPNetVarP(p *net.IPNet, name, shorthand string, value net.IPNet, usage string) {
-	CommandLine.IPNetVarP(p, name, shorthand, value, usage)
-}
-
-// IPNetVarS is like IPNetVar, but accepts a shorthand letter that can be used after a single dash, alone.
-func IPNetVarS(p *net.IPNet, name, shorthand string, value net.IPNet, usage string) {
-	CommandLine.IPNetVarS(p, name, shorthand, value, usage)
-}
-
-// IPNet defines an net.IPNet flag with specified name, default value, and usage string.
-// The return value is the address of an net.IPNet variable that stores the value of the flag.
-func (f *FlagSet) IPNet(name string, value net.IPNet, usage string) *net.IPNet {
-	return f.IPNetP(name, "", value, usage)
-}
-
-// IPNetP is like IPNet, but accepts a shorthand letter that can be used after a single dash.
-func (f *FlagSet) IPNetP(name, shorthand string, value net.IPNet, usage string) *net.IPNet {
-	p := new(net.IPNet)
-	f.IPNetVarP(p, name, shorthand, value, usage)
-	return p
-}
-
-// IPNetS is like IPNet, but accepts a shorthand letter that can be used after a single dash, alone.
-func (f *FlagSet) IPNetS(name, shorthand string, value net.IPNet, usage string) *net.IPNet {
-	p := new(net.IPNet)
-	f.IPNetVarS(p, name, shorthand, value, usage)
-	return p
-}
-
-// IPNet defines an net.IPNet flag with specified name, default value, and usage string.
-// The return value is the address of an net.IPNet variable that stores the value of the flag.
-func IPNet(name string, value net.IPNet, usage string) *net.IPNet {
-	return CommandLine.IPNet(name, value, usage)
-}
-
-// IPNetP is like IPNet, but accepts a shorthand letter that can be used after a single dash.
-func IPNetP(name, shorthand string, value net.IPNet, usage string) *net.IPNet {
-	return CommandLine.IPNetP(name, shorthand, value, usage)
-}
-
-// IPNetS is like IPNet, but accepts a shorthand letter that can be used after a single dash, alone.
-func IPNetS(name, shorthand string, value net.IPNet, usage string) *net.IPNet {
-	return CommandLine.IPNetS(name, shorthand, value, usage)
+// IPNet defines a net.IPNet flag with specified name, default value, and usage string.
+// The return value is the address of a net.IPNet variable that stores the value of the flag.
+func IPNet(name string, value net.IPNet, usage string, opts ...Opt) *net.IPNet {
+	return CommandLine.IPNet(name, value, usage, opts...)
 }

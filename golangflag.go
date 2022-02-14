@@ -76,7 +76,7 @@ func ZFlagFromGoFlag(goflag *goflag.Flag) *Flag {
 		Usage: goflag.Usage,
 		Value: wrapFlagValue(goflag.Value),
 		// Looks like golang flags don't set DefValue correctly  :-(
-		//DefValue: goflag.DefValue,
+		// DefValue: goflag.DefValue,
 		DefValue: goflag.Value.String(),
 	}
 	// Ex: if the golang flag was -v, allow both -v and --v to work

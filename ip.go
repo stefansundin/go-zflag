@@ -56,70 +56,28 @@ func (f *FlagSet) MustGetIP(name string) net.IP {
 	return val
 }
 
-// IPVar defines an net.IP flag with specified name, default value, and usage string.
-// The argument p points to an net.IP variable in which to store the value of the flag.
-func (f *FlagSet) IPVar(p *net.IP, name string, value net.IP, usage string) {
-	f.IPVarP(p, name, "", value, usage)
+// IPVar defines a net.IP flag with specified name, default value, and usage string.
+// The argument p points to a net.IP variable in which to store the value of the flag.
+func (f *FlagSet) IPVar(p *net.IP, name string, value net.IP, usage string, opts ...Opt) {
+	f.Var(newIPValue(value, p), name, usage, opts...)
 }
 
-// IPVarP is like IPVar, but accepts a shorthand letter that can be used after a single dash.
-func (f *FlagSet) IPVarP(p *net.IP, name, shorthand string, value net.IP, usage string) {
-	f.VarP(newIPValue(value, p), name, shorthand, usage)
+// IPVar defines a net.IP flag with specified name, default value, and usage string.
+// The argument p points to a net.IP variable in which to store the value of the flag.
+func IPVar(p *net.IP, name string, value net.IP, usage string, opts ...Opt) {
+	CommandLine.IPVar(p, name, value, usage, opts...)
 }
 
-// IPVarS is like IPVar, but accepts a shorthand letter that can be used after a single dash, alone.
-func (f *FlagSet) IPVarS(p *net.IP, name, shorthand string, value net.IP, usage string) {
-	f.VarS(newIPValue(value, p), name, shorthand, usage)
+// IP defines a net.IP flag with specified name, default value, and usage string.
+// The return value is the address of a net.IP variable that stores the value of the flag.
+func (f *FlagSet) IP(name string, value net.IP, usage string, opts ...Opt) *net.IP {
+	var p net.IP
+	f.IPVar(&p, name, value, usage, opts...)
+	return &p
 }
 
-// IPVar defines an net.IP flag with specified name, default value, and usage string.
-// The argument p points to an net.IP variable in which to store the value of the flag.
-func IPVar(p *net.IP, name string, value net.IP, usage string) {
-	CommandLine.IPVar(p, name, value, usage)
-}
-
-// IPVarP is like IPVar, but accepts a shorthand letter that can be used after a single dash.
-func IPVarP(p *net.IP, name, shorthand string, value net.IP, usage string) {
-	CommandLine.IPVarP(p, name, shorthand, value, usage)
-}
-
-// IPVarS is like IPVar, but accepts a shorthand letter that can be used after a single dash, alone.
-func IPVarS(p *net.IP, name, shorthand string, value net.IP, usage string) {
-	CommandLine.IPVarS(p, name, shorthand, value, usage)
-}
-
-// IP defines an net.IP flag with specified name, default value, and usage string.
-// The return value is the address of an net.IP variable that stores the value of the flag.
-func (f *FlagSet) IP(name string, value net.IP, usage string) *net.IP {
-	return f.IPP(name, "", value, usage)
-}
-
-// IPP is like IP, but accepts a shorthand letter that can be used after a single dash.
-func (f *FlagSet) IPP(name, shorthand string, value net.IP, usage string) *net.IP {
-	p := new(net.IP)
-	f.IPVarP(p, name, shorthand, value, usage)
-	return p
-}
-
-// IPS is like IP, but accepts a shorthand letter that can be used after a single dash, alone.
-func (f *FlagSet) IPS(name, shorthand string, value net.IP, usage string) *net.IP {
-	p := new(net.IP)
-	f.IPVarS(p, name, shorthand, value, usage)
-	return p
-}
-
-// IP defines an net.IP flag with specified name, default value, and usage string.
-// The return value is the address of an net.IP variable that stores the value of the flag.
-func IP(name string, value net.IP, usage string) *net.IP {
-	return CommandLine.IP(name, value, usage)
-}
-
-// IPP is like IP, but accepts a shorthand letter that can be used after a single dash.
-func IPP(name, shorthand string, value net.IP, usage string) *net.IP {
-	return CommandLine.IPP(name, shorthand, value, usage)
-}
-
-// IPS is like IP, but accepts a shorthand letter that can be used after a single dash, alone.
-func IPS(name, shorthand string, value net.IP, usage string) *net.IP {
-	return CommandLine.IPS(name, shorthand, value, usage)
+// IP defines a net.IP flag with specified name, default value, and usage string.
+// The return value is the address of a net.IP variable that stores the value of the flag.
+func IP(name string, value net.IP, usage string, opts ...Opt) *net.IP {
+	return CommandLine.IP(name, value, usage, opts...)
 }
