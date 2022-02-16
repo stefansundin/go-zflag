@@ -135,13 +135,7 @@ type optAnnotationImpl struct {
 }
 
 func (o optAnnotationImpl) apply(c *Flag) error {
-	if c.Annotations == nil {
-		c.Annotations = map[string][]string{}
-	}
-
-	c.Annotations[o.key] = o.value
-
-	return nil
+	return c.SetAnnotation(o.key, o.value)
 }
 
 // OptAnnotation Use it to annotate this specific flag for your application

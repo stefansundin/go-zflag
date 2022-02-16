@@ -462,6 +462,19 @@ func (f *FlagSet) Set(name, value string) error {
 	return nil
 }
 
+// SetAnnotation allows one to set arbitrary annotations on this flag.
+// This is sometimes used by gowarden/zulu programs which want to generate additional
+// bash completion information.
+func (f *Flag) SetAnnotation(key string, values []string) error {
+	if f.Annotations == nil {
+		f.Annotations = map[string][]string{}
+	}
+
+	f.Annotations[key] = values
+
+	return nil
+}
+
 // SetAnnotation allows one to set arbitrary annotations on a flag in the FlagSet.
 // This is sometimes used by gowarden/zulu programs which want to generate additional
 // bash completion information.
@@ -471,11 +484,7 @@ func (f *FlagSet) SetAnnotation(name, key string, values []string) error {
 	if !ok {
 		return NewUnknownFlagError(name)
 	}
-	if flag.Annotations == nil {
-		flag.Annotations = map[string][]string{}
-	}
-	flag.Annotations[key] = values
-	return nil
+	return flag.SetAnnotation(key, values)
 }
 
 // Changed returns true if the flag was explicitly set during Parse() and false
