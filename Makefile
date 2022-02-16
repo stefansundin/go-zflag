@@ -1,4 +1,4 @@
-.PHONY: lint test unittest cobratest clean
+.PHONY: lint test unittest zulutest clean
 
 ifeq (, $(shell which golangci-lint 2> /dev/null))
 	$(error Unable to locate golangci-lint! Ensure it is installed and available in PATH before re-running.)
@@ -23,15 +23,15 @@ unittest:
 	@echo '********** UNIT TEST **********'
 	@$(gotest) -failfast -v -race -cover
 
-cobratest:
-	@echo '********** COBRA TEST **********'
+zulutest:
+	@echo '********** ZULU TEST **********'
 	@set -e \
-		&& test -d cobra || { git clone https://github.com/spf13/cobra.git && ln -s ../../zflag cobra/zflag ; } \
-		&& cd cobra \
-		&& go mod edit -replace github.com/spf13/zflag=./zflag \
+		&& test -d zulu || { git clone https://github.com/gowarden/zulu.git && ln -s ../../zflag zulu/zflag ; } \
+		&& cd zulu \
+		&& go mod edit -replace github.com/gowarden/zflag=./zflag \
 		&& $(gotest) -v ./...
 
-test: unittest cobratest lint
+test: unittest zulutest lint
 
 clean:
-	rm -rf cobra
+	rm -rf zulu

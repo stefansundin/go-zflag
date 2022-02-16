@@ -105,7 +105,7 @@ type optHiddenImpl struct{}
 
 func (o optHiddenImpl) apply(c *Flag) error { c.Hidden = true; return nil }
 
-// OptHidden used by cobra.Command to allow flags to be hidden from help/usage text
+// OptHidden used by zulu.Command to allow flags to be hidden from help/usage text
 func OptHidden() Opt { return optHiddenImpl{} }
 
 type optShorthandDeprecatedImpl struct{ msg string }

@@ -8,7 +8,6 @@
 [![Build Status](https://github.com/gowarden/zflag/actions/workflows/validate.yml/badge.svg)](https://github.com/gowarden/zflag/actions/workflows/validate.yml)
 
 * [Installation](#installation)
-  * [Installing this fork with spf13/cobra](#installing-this-fork-with-cobra)
 * [Supported Syntax](#supported-syntax  )
 * [Documentation](#documentation)
   * [Set a custom default for flags passed without values](#set-a-custom-default-for-flags-passed-without-values)

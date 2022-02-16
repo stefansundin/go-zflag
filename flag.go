@@ -96,10 +96,10 @@ type Flag struct {
 	Changed             bool                // If the user set the value (or if left to default)
 	NoOptDefVal         string              // default value (as text); if the flag is on the command line without any options
 	Deprecated          string              // If this flag is deprecated, this string is the new or now thing to use
-	Hidden              bool                // used by cobra.Command to allow flags to be hidden from help/usage text
+	Hidden              bool                // used by zulu.Command to allow flags to be hidden from help/usage text
 	ShorthandDeprecated string              // If the shorthand of this flag is deprecated, this string is the new or now thing to use
 	Group               string              // flag group
-	Annotations         map[string][]string // Use it to annotate this specific flag for your application; used by cobra.Command bash completion code
+	Annotations         map[string][]string // Use it to annotate this specific flag for your application; used by zulu.Command bash completion code
 }
 
 // Value is the interface to the dynamic value stored in a flag.
@@ -463,7 +463,7 @@ func (f *FlagSet) Set(name, value string) error {
 }
 
 // SetAnnotation allows one to set arbitrary annotations on a flag in the FlagSet.
-// This is sometimes used by spf13/cobra programs which want to generate additional
+// This is sometimes used by gowarden/zulu programs which want to generate additional
 // bash completion information.
 func (f *FlagSet) SetAnnotation(name, key string, values []string) error {
 	normalName := f.normalizeFlagName(name)
