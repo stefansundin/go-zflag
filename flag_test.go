@@ -1052,7 +1052,7 @@ func TestOutputExitOnError(t *testing.T) {
 	cmd.Stderr = mockStderr
 	err := cmd.Run()
 	if e, ok := err.(*exec.ExitError); ok && !e.Success() {
-		want := "unknown flag: --unknown\nUsage of " + t.Name() + ":\n"
+		want := "Usage of " + t.Name() + ":\n\nunknown flag: --unknown\n"
 		if got := mockStderr.String(); got != want {
 			t.Errorf("got '%s', want '%s'", got, want)
 		}

@@ -949,9 +949,10 @@ func Var(value Value, name, usage string, opts ...Opt) *Flag {
 // failf prints to standard error a formatted error and usage message and
 // returns the error.
 func (f *FlagSet) failf(format string, a ...interface{}) error {
-	err := fmt.Errorf(format, a...)
-	fmt.Fprintln(f.Output(), err)
 	f.usage()
+	err := fmt.Errorf(format, a...)
+	fmt.Fprintln(f.Output())
+	fmt.Fprintln(f.Output(), err)
 	return err
 }
 
