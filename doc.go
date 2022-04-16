@@ -10,7 +10,7 @@ which can be found in the LICENSE file.
 If you import zflag under the name "flag" then all code
 should continue to function with no changes.
 
-	import flag "github.com/gowarden/zflag"
+	import flag "github.com/zulucmd/zflag"
 
 There is one exception to this: if you directly instantiate the Flag struct
 there is one more field "Shorthand" that you will need to set.

@@ -2,10 +2,10 @@
 
 ***This is a fork of [cornfeedhobo/pflag](https://github.com/cornfeedhobo/pflag), which in turn is a fork of [spf13/pflag](https://github.com/spf13/pflag) due to poor maintenance***
 
-[![GoDoc](https://godoc.org/github.com/gowarden/zflag?status.svg)](https://godoc.org/github.com/gowarden/zflag)
-[![Go Report Card](https://goreportcard.com/badge/github.com/gowarden/zflag)](https://goreportcard.com/report/github.com/gowarden/zflag)
-[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/gowarden/zflag?sort=semver)](https://github.com/gowarden/zflag/releases)
-[![Build Status](https://github.com/gowarden/zflag/actions/workflows/validate.yml/badge.svg)](https://github.com/gowarden/zflag/actions/workflows/validate.yml)
+[![GoDoc](https://godoc.org/github.com/zulucmd/zflag?status.svg)](https://godoc.org/github.com/zulucmd/zflag)
+[![Go Report Card](https://goreportcard.com/badge/github.com/zulucmd/zflag)](https://goreportcard.com/report/github.com/zulucmd/zflag)
+[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/zulucmd/zflag?sort=semver)](https://github.com/zulucmd/zflag/releases)
+[![Build Status](https://github.com/zulucmd/zflag/actions/workflows/validate.yml/badge.svg)](https://github.com/zulucmd/zflag/actions/workflows/validate.yml)
 
 * [Installation](#installation)
 * [Supported Syntax](#supported-syntax  )
@@ -30,7 +30,7 @@ zflag is available using the standard `go get` command.
 Install by running:
 
 ```bash
-go get github.com/gowarden/zflag
+go get github.com/zulucmd/zflag
 ```
 
 ## Supported Syntax
@@ -84,10 +84,10 @@ before this terminator.
 ## Documentation
 
 You can see the full reference documentation of the zflag package
-[at godoc.org](http://godoc.org/github.com/gowarden/zflag), querying with
+[at godoc.org](http://godoc.org/github.com/zulucmd/zflag), querying with
 [`go doc`](https://golang.org/cmd/doc/), or through go's standard documentation
 system by running `godoc -http=:6060` and browsing to
-[http://localhost:6060/pkg/github.com/gowarden/zflag](http://localhost:6060/pkg/github.com/gowarden/zflag)
+[http://localhost:6060/pkg/github.com/zulucmd/zflag](http://localhost:6060/pkg/github.com/zulucmd/zflag)
 after installation.
 
 ### Set a custom default for flags passed without values
@@ -224,7 +224,7 @@ third-party dependencies (e.g. `golang/glog`).
 ```go
 import (
 	goflag "flag"
-	flag "github.com/gowarden/zflag"
+	flag "github.com/zulucmd/zflag"
 )
 
 var ip *int = flag.Int("flagname", 1234, "help message for flagname")

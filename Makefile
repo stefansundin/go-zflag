@@ -28,7 +28,7 @@ zulutest:
 	@set -e \
 		&& test -d zulu || { git clone https://github.com/gowarden/zulu.git && ln -s ../../zflag zulu/zflag ; } \
 		&& cd zulu \
-		&& go mod edit -replace github.com/gowarden/zflag=./zflag \
+		&& go mod edit -replace github.com/zulucmd/zflag=./zflag \
 		&& $(gotest) -v ./...
 
 test: unittest zulutest lint
