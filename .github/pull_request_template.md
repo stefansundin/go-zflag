@@ -21,9 +21,3 @@ By opening a pull request and making a contribution to this project, you certify
 - [ ] Tests have been added and/or updated
 - [ ] `make test` has been run
 - [ ] `make lint` has been run
-
-<!-- Optional (delete these wrapping comment lines) :
-### A gif to brighten your reviewer's day and/or represents how you feel about this pull request
-
-![](place-image-url-here)
--->

@@ -8,7 +8,7 @@
 [![Build Status](https://github.com/stefansundin/go-zflag/actions/workflows/validate.yml/badge.svg)](https://github.com/stefansundin/go-zflag/actions/workflows/validate.yml)
 
 * [Installation](#installation)
-* [Supported Syntax](#supported-syntax  )
+* [Supported Syntax](#supported-syntax)
 * [Documentation](#documentation)
   * [Set a custom default for flags passed without values](#set-a-custom-default-for-flags-passed-without-values)
   * [Mutating or "Normalizing" Flag names](#mutating-or-normalizing-flag-names)
