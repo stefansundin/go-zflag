@@ -1,3 +1,3 @@
-module github.com/gowarden/zflag
+module github.com/stefansundin/go-zflag
 
 go 1.16
