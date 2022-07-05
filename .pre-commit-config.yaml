@@ -7,8 +7,8 @@ repos:
       - id: validate_manifest
 
   - repo: https://github.com/golangci/golangci-lint
-    # When updating this, also update .golangci.yml accordingly
-    rev: v1.44.0
+    # When updating this, also update .github/workflows/validate.yml accordingly
+    rev: v1.46.2
     hooks:
       - id: golangci-lint
 
