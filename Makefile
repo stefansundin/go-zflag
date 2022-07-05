@@ -26,7 +26,7 @@ unittest:
 zulutest:
 	@echo '********** ZULU TEST **********'
 	@set -e \
-		&& test -d zulu || { git clone https://github.com/stefansundin/go-zflag.git && ln -s ../../zflag zulu/zflag ; } \
+		&& test -d zulu || { git clone https://github.com/gowarden/zulu.git && ln -s ../../zflag zulu/zflag ; } \
 		&& cd zulu \
 		&& go mod edit -replace github.com/stefansundin/go-zflag=./zflag \
 		&& $(gotest) -v ./...
