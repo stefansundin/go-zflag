@@ -10,6 +10,7 @@
 * [Installation](#installation)
 * [Supported Syntax](#supported-syntax)
 * [Documentation](#documentation)
+  * [Create a flag set](#create-a-flag-set)
   * [Set a custom default for flags passed without values](#set-a-custom-default-for-flags-passed-without-values)
   * [Mutating or "Normalizing" Flag names](#mutating-or-normalizing-flag-names)
   * [Deprecating a flag or its shorthand](#deprecating-a-flag-or-its-shorthand)
